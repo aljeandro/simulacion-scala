@@ -1,0 +1,5 @@
+package geometria
+
+class Angulo {
+
+}

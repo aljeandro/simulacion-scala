@@ -1,0 +1,5 @@
+package infraestructura
+
+class Via {
+
+}
