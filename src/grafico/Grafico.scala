@@ -2,11 +2,13 @@ package grafico
 
 import java.awt.{BasicStroke, Color, Font}
 
+import infraestructura.{Interseccion, Via}
 import org.jfree.chart.annotations.XYTextAnnotation
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.{ChartFactory, ChartFrame, JFreeChart}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
+
 
 object Grafico{
 
@@ -15,7 +17,7 @@ object Grafico{
   val marcoGrafica: ChartFrame = new ChartFrame("Título del trabajo", grafica)
   val trazadoGrafica: XYPlot = grafica.getXYPlot
   val renderizador: XYLineAndShapeRenderer = new XYLineAndShapeRenderer(true, false)
-  val seriesVias: Array[XYSeries] = Array()
+  var seriesVias: Array[XYSeries] = Array()
 
   trazadoGrafica.setRenderer(renderizador)
   grafica.removeLegend()
@@ -51,7 +53,7 @@ object Grafico{
       trazadoGrafica.addAnnotation(etiqueta)
     }
 
-    val seriesVias: Array[XYSeries] = vias.map(via => crearSerieVia(via))
+    seriesVias = vias.map(via => crearSerieVia(via))
 
     seriesVias.foreach(serieVia => coleccionSeries.addSeries(serieVia))
 
@@ -64,10 +66,8 @@ object Grafico{
     marcoGrafica.setVisible(true)
 
   }
-  /*
+  /* El siguiente codigo será descomentado una vez estén creadas las clases necesarias para correr la función.
   def graficarVehiculos(listaVehiculos: Array[Vehiculo]): Unit = {
-
-    coleccionSeries.removeAllSeries()
 
     def crearSeriePorTipoDeVehiculo(vehiculos: Array[Vehiculo]): XYSeries = {
 
@@ -110,6 +110,8 @@ object Grafico{
       }
 
     }
+
+    coleccionSeries.removeAllSeries()
 
     val tiposVehiculos: Array[classOf[Vehiculo]] = Array(classOf[Carro], classOf[Moto], classOf[Bus], classOf[MotoTaxi], classOf[Camion])
 
