@@ -2,12 +2,15 @@ package grafico
 
 import java.awt.{BasicStroke, Color, Font}
 
-import infraestructura.{Interseccion, Via}
+import infraestructura.Interseccion
+import infraestructura.via.Via
 import org.jfree.chart.annotations.XYTextAnnotation
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.{ChartFactory, ChartFrame, JFreeChart}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
+import org.jfree.util.ShapeUtilities
+import vehiculo.Vehiculo
 
 
 object Grafico{
@@ -66,7 +69,7 @@ object Grafico{
     marcoGrafica.setVisible(true)
 
   }
-  /* El siguiente codigo será descomentado una vez estén creadas las clases necesarias para correr la función.
+
   def graficarVehiculos(listaVehiculos: Array[Vehiculo]): Unit = {
 
     def crearSeriePorTipoDeVehiculo(vehiculos: Array[Vehiculo]): XYSeries = {
@@ -121,5 +124,5 @@ object Grafico{
 
     tiposVehiculos.foreach(tipo => cambiarAparienciaVehiculos(tipo, seriesVehiculos))
 
-  }*/
+  }
 }

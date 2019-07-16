@@ -1,5 +1,5 @@
 package geometria
 
-class Punto {
+class Punto(val x: Double, val y: Double) {
 
 }

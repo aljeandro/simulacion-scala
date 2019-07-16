@@ -1,5 +1,5 @@
 package geometria
 
-class Angulo {
+class Angulo(val grados: Double) {
 
 }
