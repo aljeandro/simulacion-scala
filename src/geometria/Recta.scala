@@ -7,5 +7,7 @@ trait Recta{
   val origen: T
   val fin: T
 
-  def longitud = Math.hypot(origen.x - fin.x, origen.y - fin.y)
+  def longitud: Double = Math.hypot(origen.x - fin.x, origen.y - fin.y)
+
+  def angulo: Double = (origen.y - fin.y) / (origen.x - fin.x)
 }

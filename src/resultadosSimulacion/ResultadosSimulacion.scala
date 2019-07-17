@@ -1,0 +1,5 @@
+package resultadosSimulacion
+
+class ResultadosSimulacion {
+
+}
