@@ -3,10 +3,15 @@ package vehiculo
 import fisica.{Movil, MovimientoUniforme, Velocidad}
 import geometria.Punto
 
-abstract class Vehiculo(
-                         private var _velocidad: Velocidad,
-                         private var _posicion: Punto
-                       ) extends Movil with MovimientoUniforme{
+import scala.util.Random
+
+abstract class Vehiculo() extends Movil with MovimientoUniforme{
+
+  protected var _velocidad: Velocidad = _
+
+  protected var _posicion: Punto = _
+
+  val placa: String
 
   def velocidad: Velocidad = _velocidad
 
@@ -21,8 +26,25 @@ abstract class Vehiculo(
     posicion = movimientoUniforme(dt, posicion, velocidad)
 
   }
+
 }
 
 object Vehiculo{
+
+  def generarVehiculo: Vehiculo = {
+
+    val numAleatorio: Int = Random.nextInt(5)
+
+    if (numAleatorio == 0) new Carro()
+
+    else if (numAleatorio == 1) new Moto()
+
+    else if (numAleatorio == 2) new Bus()
+
+    else if (numAleatorio == 3) new Camion()
+
+    else new MotoTaxi()
+
+  }
 
 }

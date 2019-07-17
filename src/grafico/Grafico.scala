@@ -10,7 +10,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.{ChartFactory, ChartFrame, JFreeChart}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 import org.jfree.util.ShapeUtilities
-import vehiculo.Vehiculo
+import vehiculo.{Bus, Camion, Carro, Moto, MotoTaxi, Vehiculo}
 
 
 object Grafico{

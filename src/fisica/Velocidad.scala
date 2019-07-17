@@ -12,6 +12,10 @@ class Velocidad(private var _magnitud: Double, private var _angulo: Angulo) {
 
   def angulo: Angulo = _angulo
 
+  def velocidadDireccionX(): Double = Math.cos(Math.toRadians(angulo.grados)) * magnitud
+
+  def velocidadDireccionY(): Double = Math.sin(Math.toRadians(angulo.grados)) * magnitud
+
 }
 
 object Velocidad{
