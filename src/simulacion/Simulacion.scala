@@ -1,3 +1,4 @@
+
 package simulacion
 
 import grafo.GrafoVia
@@ -72,6 +73,16 @@ object Simulacion extends Runnable{
     /* Esta función debe crear los objetos VehiculoViaje para cada Vehiculo */
   }
 
-  def run(): Unit = {}
+  def run() {
+
+    /*
+    while (true) {
+      vehiculos.foreach(_.aumentarPosicion(dt))
+      t += dt
+      Grafico.graficarVehiculos(vehiculos)
+      Thread.sleep(tRefresh)
+    }
+    */
+  }
 }
 

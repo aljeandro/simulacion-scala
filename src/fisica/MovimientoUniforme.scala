@@ -1,3 +1,4 @@
+
 package fisica
 
 import geometria.Punto

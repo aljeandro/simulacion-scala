@@ -1,3 +1,4 @@
+
 package vehiculo
 
 import fisica.{Movil, MovimientoUniforme, Velocidad}
@@ -8,9 +9,7 @@ import scala.util.Random
 abstract class Vehiculo() extends Movil with MovimientoUniforme{
 
   protected var _velocidad: Velocidad = _
-
   protected var _posicion: Punto = _
-
   val placa: String
 
   def velocidad: Velocidad = _velocidad
