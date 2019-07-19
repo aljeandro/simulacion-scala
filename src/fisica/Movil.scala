@@ -1,9 +1,9 @@
+
 package fisica
 
 import geometria.Punto
 
 abstract class Movil {
-
   var _velocidad: Velocidad
 
   var _posicion: Punto
@@ -16,6 +16,7 @@ abstract class Movil {
 
   def posicion_=(posicion: Punto): Unit
 
+  // Falta desarrollar el cuerpo de este método
   def aumentarPosicion(dt: Double): Unit
 
   def anguloMovimiento(): Double = velocidad.angulo.grados
