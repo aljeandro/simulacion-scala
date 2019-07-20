@@ -1,11 +1,10 @@
+
 package grafo
 
 import infraestructura.Interseccion
 import infraestructura.via.Via
 import scalax.collection.edge.WLUnDiEdge
 import scalax.collection.mutable.Graph
-
-
 
 object GrafoVia {
 

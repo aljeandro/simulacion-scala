@@ -2,16 +2,18 @@
 package simulacion
 
 import grafo.GrafoVia
-import vehiculo.{Bus, Camion, Carro, Moto, MotoTaxi, Vehiculo}
+import vehiculo._
 import infraestructura.via.Via
+import infraestructura.Interseccion
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
+import scala.math._
 
 object Simulacion extends Runnable{
 
   val grafo = GrafoVia
-  var t = 0
+  var t = 0 // Tiempo de la simulación
   var dt = 1
   var tiempoDormir = 0.5
   val minVehiculos = 100
@@ -20,6 +22,11 @@ object Simulacion extends Runnable{
   val maxVelocidad = 100
   var vehiculos = ArrayBuffer[Vehiculo]()
   val vias = ArrayBuffer[Via]()
+
+
+  val intersecciones = ArrayBuffer[Interseccion]()
+  val listaDeVehiculos = ArrayBuffer[VehiculoViaje]()
+
   /* TODO: Falta identificar algunas variables más, necesarias para la simulación */
 
   def cargarConfiguracion(): Unit = {
@@ -39,11 +46,11 @@ object Simulacion extends Runnable{
                     ): Unit = {
 
     val cantVehiculos: Int = Random.nextInt(maxVehiculos - minVehiculos) + minVehiculos
-    val cantCarro: Int = Math.floor(cantVehiculos * proporcionCarro).toInt
-    val cantMoto: Int = Math.floor(cantVehiculos * proporcionMoto).toInt
-    val cantBus: Int = Math.floor(cantVehiculos * proporcionBus).toInt
-    val cantCamion: Int = Math.floor(cantVehiculos * proporcionCamion).toInt
-    val cantMotoTaxi: Int = Math.floor(cantVehiculos * proporcionMotoTaxi).toInt
+    val cantCarro: Int = floor(cantVehiculos * proporcionCarro).toInt
+    val cantMoto: Int = floor(cantVehiculos * proporcionMoto).toInt
+    val cantBus: Int = floor(cantVehiculos * proporcionBus).toInt
+    val cantCamion: Int = floor(cantVehiculos * proporcionCamion).toInt
+    val cantMotoTaxi: Int = floor(cantVehiculos * proporcionMotoTaxi).toInt
 
     var contCarro: Int = 0
     var contMoto: Int = 0
@@ -54,27 +61,48 @@ object Simulacion extends Runnable{
     while (vehiculos.size < cantVehiculos) {
 
       val vehiculo = Vehiculo.generarVehiculo
+      vehiculos += vehiculo
 
-      if (vehiculo.getClass == classOf[Carro] && contCarro < cantCarro) {vehiculos += vehiculo; contCarro += 1}
+      if (vehiculo.getClass == classOf[Carro] && contCarro < cantCarro) contCarro += 1
 
-      else if (vehiculo.getClass == classOf[Moto] && contMoto < cantMoto) {vehiculos += vehiculo; contMoto += 1}
+      else if (vehiculo.getClass == classOf[Moto] && contMoto < cantMoto) contMoto += 1
 
-      else if (vehiculo.getClass == classOf[Bus] && contBus < cantBus) {vehiculos += vehiculo; contBus += 1}
+      else if (vehiculo.getClass == classOf[Bus] && contBus < cantBus) contBus += 1
 
-      else if (vehiculo.getClass == classOf[Camion] && contCamion < cantCamion) {vehiculos += vehiculo; contCamion += 1}
+      else if (vehiculo.getClass == classOf[Camion] && contCamion < cantCamion) contCamion += 1
 
-      else if (vehiculo.getClass == classOf[MotoTaxi] && contMotoTaxi < cantMotoTaxi) {
-        vehiculos += vehiculo; contMotoTaxi += 1}
+      else if (vehiculo.getClass == classOf[MotoTaxi] && contMotoTaxi < cantMotoTaxi) contMotoTaxi += 1
+
     }
   }
 
+  // Esta función crea los vehículosViaje para cada vehículo
   def crearViajesVehiculos(): Unit ={
 
-    /* TODO: Esta función debe crear los objetos VehiculoViaje para cada Vehiculo */
+    for(i <- 0 to vehiculos.size){
+
+      val origenAleat: Int = Random.nextInt(intersecciones.size)
+      var destinoAleat: Int = Random.nextInt(intersecciones.size)
+
+      while(origenAleat == destinoAleat) destinoAleat = Random.nextInt(intersecciones.size)
+
+      // listaDeVehiculos += new VehiculoViaje(vehiculos(i), intersecciones(origenAleat),
+      //  intersecciones(destinoAleat), )
+
+      // Falta el cuarto argumento, el cual sería el camino
+    }
+
   }
 
   def run(): Unit = {
 
-  }
-}
+    while (true) {
+      listaDeVehiculos.foreach(_.mover(dt))
+      t += dt
+      Grafico.graficarVehiculos(listaDeVehiculos)
+      Thread.sleep(tiempoDormir)
+    }
 
+  }
+
+}

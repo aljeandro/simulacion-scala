@@ -1,8 +1,9 @@
+
 package vehiculo
 
 import scala.util.Random
 
-class Bus extends Vehiculo {
+class Bus extends Vehiculo() {
 
   val placa: String = {
 

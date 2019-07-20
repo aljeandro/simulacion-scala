@@ -1,3 +1,4 @@
+
 package grafico
 
 import java.awt.{BasicStroke, Color, Font}
