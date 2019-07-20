@@ -1,6 +1,8 @@
 
 package fisica
 
+import scala.math._
+
 import geometria.Angulo
 
 class Velocidad(private var _magnitud: Double, private var _angulo: Angulo) {
@@ -13,9 +15,9 @@ class Velocidad(private var _magnitud: Double, private var _angulo: Angulo) {
 
   def angulo: Angulo = _angulo
 
-  def velocidadDireccionX(): Double = Math.cos(Math.toRadians(angulo.grados)) * magnitud
+  def velocidadDireccionX(): Double = cos(toRadians(angulo.grados)) * magnitud
 
-  def velocidadDireccionY(): Double = Math.sin(Math.toRadians(angulo.grados)) * magnitud
+  def velocidadDireccionY(): Double = sin(toRadians(angulo.grados)) * magnitud
 
 }
 
