@@ -20,14 +20,14 @@ object Simulacion extends Runnable{
   val maxVelocidad = 100
   var vehiculos = ArrayBuffer[Vehiculo]()
   val vias = ArrayBuffer[Via]()
-  /* Falta identificar algunas variables más, necesarias para la simulación */
+  /* TODO: Falta identificar algunas variables más, necesarias para la simulación */
 
   def cargarConfiguracion(): Unit = {
 
     t = 0
     vehiculos.clear()
     vias.clear()
-    /* función sin terminar */
+    /* TODO: función sin terminar */
   }
 
   def crearVehiculos(
@@ -70,19 +70,11 @@ object Simulacion extends Runnable{
 
   def crearViajesVehiculos(): Unit ={
 
-    /* Esta función debe crear los objetos VehiculoViaje para cada Vehiculo */
+    /* TODO: Esta función debe crear los objetos VehiculoViaje para cada Vehiculo */
   }
 
-  def run() {
+  def run(): Unit = {
 
-    /*
-    while (true) {
-      vehiculos.foreach(_.aumentarPosicion(dt))
-      t += dt
-      Grafico.graficarVehiculos(vehiculos)
-      Thread.sleep(tRefresh)
-    }
-    */
   }
 }
 
