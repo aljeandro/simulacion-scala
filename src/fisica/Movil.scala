@@ -5,8 +5,8 @@ import geometria.Punto
 
 abstract class Movil {
 
-  var _posicion: Punto
-  var _velocidad: Velocidad
+  protected var _posicion: Punto
+  protected var _velocidad: Velocidad
 
   def posicion: Punto
 

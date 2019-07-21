@@ -106,6 +106,7 @@ object Grafico{
     def crearEtiquetaInterseccion(interseccion: Interseccion): Unit = {
 
       val etiqueta: XYTextAnnotation = new XYTextAnnotation(interseccion.nombre, interseccion.x, interseccion.y)
+      etiqueta.setPaint(interseccion.color)
       etiqueta.setFont(new Font("SansSerif", Font.PLAIN, 12))
       trazadoGrafica.addAnnotation(etiqueta)
     }
