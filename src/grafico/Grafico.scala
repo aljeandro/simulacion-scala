@@ -13,7 +13,7 @@ import org.jfree.chart.{ChartFactory, ChartFrame, JFreeChart}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 import org.jfree.util.ShapeUtilities
 import simulacion.Simulacion
-import vehiculo.{Bus, Camion, Carro, Moto, MotoTaxi, Vehiculo}
+import vehiculo.{Bus, Camion, Carro, Moto, MotoTaxi, Vehiculo, VehiculoViaje}
 
 
 object Grafico{
@@ -27,7 +27,7 @@ object Grafico{
     *   intersecciones. Solo se ejecuta una vez cuando se corre el programa.
     *
     *   graficarVehiculos: este método está encargado de graficar los diferentes tipos de vehiculos. Se ejecuta por cada
-    *   iteracion del método run en el object Simulacion.
+    *   iteración del método run en el object Simulacion.
     *
     * Las variables del object son:
     *
@@ -67,9 +67,9 @@ object Grafico{
 
       val key : Int = keyEvent.getKeyCode
 
-      if (key == KeyEvent.VK_F5) Simulacion.IniciarSimulacion()
+      if (key == KeyEvent.VK_F5) Simulacion.iniciarSimulacion()
 
-      else if (key == KeyEvent.VK_F6) {}// TODO: Definir forma para que se detenga la simulación cuando se presione F6
+      else if (key == KeyEvent.VK_F6) {Simulacion.continuarSimulacion = false}
 
     }
 
@@ -127,99 +127,58 @@ object Grafico{
 
   }
 
-  def graficarVehiculos(listaVehiculos: Array[Vehiculo]): Unit = {
+  def graficarVehiculos(viajesVehiculos: Array[VehiculoViaje]): Unit = {
 
-    def crearSeriePorTipoDeVehiculo(tipoVehiculo: String, vehiculos: Array[Vehiculo]): XYSeries = {
+    def crearRepresentacionVehiculo(vehiculoViaje: VehiculoViaje): Unit = {
 
-      /**
-        * Recibe un array de vehiculos. Primero detecta la clase de vehiculo que contiene dicho array, y según su tipo,
-        * se hace la asignación para la variable comparableVehiculo. Luego, para cada vehiculo del array agrega un punto
-        * en una serie llamada serieVehiculos. Para cada tipo de vehiculo corresponde una sola serie; por ejemplo, para
-        * los vehiculos de tipo Carro corresponde una sola serie.
-        * Al finalizar, se devuelve la serie de vehiculos .
-        */
+      val vehiculo: Vehiculo = vehiculoViaje.vehiculo
 
-      var comparableVehiculo: Comparable[String] = "sin definir".asInstanceOf[Comparable[String]]
+      val serieVehiculo: XYSeries = new XYSeries(vehiculo.placa.asInstanceOf[Comparable[String]])
 
-      if (tipoVehiculo == "Carro") {
-        comparableVehiculo = tipoVehiculo.asInstanceOf[Comparable[String]]}
+      serieVehiculo.add(vehiculo.posicion.x, vehiculo.posicion.y)
 
-      else if (tipoVehiculo == "Moto"){
-        comparableVehiculo = tipoVehiculo.asInstanceOf[Comparable[String]]}
+      coleccionSeries.addSeries(serieVehiculo)
 
-      else if (tipoVehiculo == "MotoTaxi") {
-        comparableVehiculo = tipoVehiculo.asInstanceOf[Comparable[String]]}
+      renderizador.setSeriesPaint(coleccionSeries.indexOf(serieVehiculo), vehiculoViaje.destino.color)
 
-      else if (tipoVehiculo == "Camion") {
-        comparableVehiculo = tipoVehiculo.asInstanceOf[Comparable[String]]}
+      if (vehiculo.getClass == classOf[Carro]){
 
-      else if (tipoVehiculo == "Bus") {
-        comparableVehiculo = tipoVehiculo.asInstanceOf[Comparable[String]]}
+        renderizador.setSeriesShape(
+          coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createDiagonalCross(3, 1))
+      }
+      else if (vehiculo.getClass == classOf[Moto]){
 
-      val serieVehiculos: XYSeries = new XYSeries(comparableVehiculo)
+        renderizador.setSeriesShape(
+          coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createDiamond(3))
+      }
+      else if (vehiculo.getClass == classOf[Bus]){
 
-      vehiculos.foreach(vehiculo => serieVehiculos.add(vehiculo.posicion.x, vehiculo.posicion.y))
-      serieVehiculos
+        renderizador.setSeriesShape(
+          coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createDownTriangle(3))
+      }
+      else if (vehiculo.getClass == classOf[MotoTaxi]){
+
+        renderizador.setSeriesShape(
+          coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createRegularCross(3, 1))
+
+      }
+      else if (vehiculo.getClass == classOf[Camion]){
+
+        renderizador.setSeriesShape(
+          coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createDownTriangle(4))
+      }
     }
 
-    def cambiarAparienciaVehiculos(tipoVehiculo: String, seriesVehiculosAux: Array[XYSeries]): Unit = {
-
-      if (tipoVehiculo == "Carro"){
-
-        renderizador.setSeriesShape(
-          coleccionSeries.indexOf(seriesVehiculosAux(0)), ShapeUtilities.createDiagonalCross(3, 1))
-        renderizador.setSeriesPaint(coleccionSeries.indexOf(seriesVehiculosAux(0)), Color.BLACK)
-      }
-      else if (tipoVehiculo == "Moto"){
-
-        renderizador.setSeriesShape(
-          coleccionSeries.indexOf(seriesVehiculosAux(1)), ShapeUtilities.createDiamond(3))
-        renderizador.setSeriesPaint(coleccionSeries.indexOf(seriesVehiculosAux(1)), Color.BLUE)
-      }
-      else if (tipoVehiculo == "Bus"){
-
-        renderizador.setSeriesShape(
-          coleccionSeries.indexOf(seriesVehiculosAux(2)), ShapeUtilities.createDownTriangle(3))
-        renderizador.setSeriesPaint(coleccionSeries.indexOf(seriesVehiculosAux(2)), Color.CYAN)
-      }
-      else if (tipoVehiculo == "MotoTaxi"){
-
-        renderizador.setSeriesShape(
-          coleccionSeries.indexOf(seriesVehiculosAux(3)), ShapeUtilities.createRegularCross(3, 1))
-        renderizador.setSeriesPaint(coleccionSeries.indexOf(seriesVehiculosAux(3)), Color.MAGENTA)
-      }
-      else if (tipoVehiculo == "Camion"){
-
-        renderizador.setSeriesShape(
-          coleccionSeries.indexOf(seriesVehiculosAux(4)), ShapeUtilities.createDownTriangle(4))
-        renderizador.setSeriesPaint(coleccionSeries.indexOf(seriesVehiculosAux(4)), Color.ORANGE)
-      }
-
-    }
     /* Cada vez que se vaya a graficar los vehículos, se remueven todas las series de coleccionSeries para poder
     * actualizar las series */
     coleccionSeries.removeAllSeries()
 
-    val tiposVehiculos: Array[String] = Array("Carro", "Moto", "Bus", "MotoTaxi", "Camion")
+    // Crea la representación en el gráfico de los vehiculos
+    viajesVehiculos.foreach(vehiculoViaje => crearRepresentacionVehiculo(vehiculoViaje))
 
-    val carros: Array[Vehiculo] = listaVehiculos.filter(_.getClass == classOf[Carro])
-    val motos: Array[Vehiculo] = listaVehiculos.filter(_.getClass == classOf[Moto])
-    val buses: Array[Vehiculo] = listaVehiculos.filter(_.getClass == classOf[Bus])
-    val motoTaxis: Array[Vehiculo] = listaVehiculos.filter(_.getClass == classOf[MotoTaxi])
-    val camiones: Array[Vehiculo] = listaVehiculos.filter(_.getClass == classOf[Camion])
+    /* A ColeccionSeries le agrego nuevamente las seriesVias */
+    seriesVias.foreach(serie => coleccionSeries.addSeries(serie))
 
-    val serieCarros: XYSeries = crearSeriePorTipoDeVehiculo("Carro", carros)
-    val serieMotos: XYSeries = crearSeriePorTipoDeVehiculo("Moto", motos)
-    val serieBuses: XYSeries = crearSeriePorTipoDeVehiculo("Bus", buses)
-    val serieMotoTaxis: XYSeries = crearSeriePorTipoDeVehiculo("MotoTaxi", motoTaxis)
-    val serieCamiones: XYSeries = crearSeriePorTipoDeVehiculo("Camion", camiones)
-
-    val seriesVehiculos: Array[XYSeries] = Array(serieCarros, serieMotos, serieBuses, serieMotoTaxis, serieCamiones)
-
-    /* A ColeccionSeries agrego todas las series, tanto las vías como las series de los vehículos */
-    (seriesVehiculos ++ seriesVias).foreach(serie => coleccionSeries.addSeries(serie))
-
-    tiposVehiculos.foreach(tipo => cambiarAparienciaVehiculos(tipo, seriesVehiculos))
     marcoGrafica.setVisible(true)
 
   }
