@@ -6,57 +6,49 @@ import java.awt.Color
 import grafico.Grafico
 import grafo.GrafoVia
 import vehiculo._
-import infraestructura.via.{Sentido, Via}
+import infraestructura.via._
 import infraestructura.Interseccion
 
-import scala.collection.mutable.Queue
-import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
-import scala.math._
+import scala.math.round
+import scala.math.abs
+
 
 object Simulacion extends Runnable{
 
   val grafo = GrafoVia
-  var t = 0 // Tiempo de la simulación
-  var dt = 1
-  var tiempoDormir: Double = _
+
+  var intersecciones: Array[Interseccion] = _
+  var vias: Array[Via] = _
+
+  var t: Int = _
+  var dt: Int = _
+  var tiempoDormir: Int = _
   var minVehiculos: Int = _
   var maxVehiculos: Int = _
-  var minVelocidad: Double = _
-  var maxVelocidad = 100
-  var vehiculos = ArrayBuffer[Vehiculo]()
-  var vehiculosViajes = ArrayBuffer[VehiculoViaje]()
-  val vias = Array[Via]()
+  var minVelocidad: Int = _
+  var maxVelocidad: Int = _
   var proporcionCarro: Double = _
   var proporcionMoto: Double = _
   var proporcionBus: Double = _
   var proporcionCamion: Double = _
   var proporcionMotoTaxi: Double = _
-  val intersecciones = ArrayBuffer[Interseccion]()
   var continuarSimulacion: Boolean = _
 
-  cargarInfraestructura()
+  var cantVehiculos: Int = _
+  val vehiculos: Array[Vehiculo] = new Array[Vehiculo](cantVehiculos)
+  val vehiculosViajes: Array[VehiculoViaje] = new Array[VehiculoViaje](cantVehiculos)
 
-  def cargarParametros(): Unit = {
 
-    t = 0
-    dt = 1  // TODO: Cargar desde el json
-    tiempoDormir = 0.5 // TODO: Cargar desde el json
-    minVehiculos = 100 // TODO: Cargar desde el json
-    maxVehiculos = 200  // TODO: Cargar desde el json
-    proporcionCarro = 0.4 // TODO: Cargar desde el json
-    proporcionMoto = 0.3 // TODO: Cargar desde el json
-    proporcionBus = 0.15 // TODO: Cargar desde el json
-    proporcionCamion = 0.1 // TODO: Cargar desde el json
-    proporcionMotoTaxi = 0.05 // TODO: Cargar desde el json
-    continuarSimulacion = true
-
-    vehiculos.clear()
-    vehiculosViajes.clear()
+  def iniciarSimulacion(): Unit = {
+    cargarInfraestructura()
+    cargarParametros()         // TODO: Estos parámetros deben ser cargados desde el Json
+    crearVehiculos()
+    crearViajesVehiculos()
+    run()
   }
 
   def cargarInfraestructura(): Unit = {
-
     val niquia = new Interseccion(300, 12000, "Niquia", new Color(3, 214, 0))
     val lauraAuto = new Interseccion(2400, 11400, "M. Laura Auto", new Color(161, 92, 255))
     val lauraReg = new Interseccion(2400, 12600, "M. Laura Reg", new Color(132, 77, 206))
@@ -100,8 +92,11 @@ object Simulacion extends Runnable{
     val _65_80 = new Interseccion(19500, 10500, "65 con 30", new Color(35, 86, 85))
     val gu_37S = new Interseccion(21000, 12000, "Guay con 37S", new Color(60, 6, 86))
 
-    vias = Array(
+    intersecciones = Array(niquia, lauraAuto, lauraReg, ptoCero, mino, villa, ig65, robledo, colReg, colFerr, col65, col80, juanOr, maca,
+      expo, reg30, monte, agua, viva, mayor, ferrCol, ferrJuan, sanDiego, premium, pp, santafe, pqEnv, juan65, juan80,
+      _33_65, bule, gema, _30_65, _30_70, _30_80, bol65, gu10, terminal, gu30, gu80, _65_80, gu_37S)
 
+    vias = Array(
       new Via(niquia, lauraAuto, 80, TipoVia("Carrera"), Sentido.dobleVia, "64C", "Auto Norte"),
       new Via(niquia, lauraReg, 80, TipoVia("Carrera"), Sentido.dobleVia, "62", "Regional"),
       new Via(lauraAuto, lauraReg, 60, TipoVia("Calle"), Sentido.dobleVia, "94", "Pte Madre Laura"),
@@ -176,14 +171,29 @@ object Simulacion extends Runnable{
     )
   }
 
-  def crearVehiculos(): Unit = {
+  def cargarParametros(): Unit = {
+    // TODO: Cargar estos datos del Json
+    t = 0
+    dt = 1
+    tiempoDormir = 1
+    minVehiculos = 100
+    maxVehiculos = 200
+    proporcionCarro = 0.4
+    proporcionMoto = 0.3
+    proporcionBus = 0.15
+    proporcionCamion = 0.1
+    proporcionMotoTaxi = 0.05
 
-    val cantVehiculos: Int = Random.nextInt(maxVehiculos - minVehiculos) + minVehiculos
-    val cantCarro: Int = floor(cantVehiculos * proporcionCarro).toInt
-    val cantMoto: Int = floor(cantVehiculos * proporcionMoto).toInt
-    val cantBus: Int = floor(cantVehiculos * proporcionBus).toInt
-    val cantCamion: Int = floor(cantVehiculos * proporcionCamion).toInt
-    val cantMotoTaxi: Int = floor(cantVehiculos * proporcionMotoTaxi).toInt
+    continuarSimulacion = true
+  }
+
+  def crearVehiculos(): Unit = {
+    cantVehiculos = Random.nextInt(maxVehiculos - minVehiculos) + minVehiculos
+    val cantCarro: Int = round(cantVehiculos * proporcionCarro).toInt
+    val cantMoto: Int = round(cantVehiculos * proporcionMoto).toInt
+    val cantBus: Int = round(cantVehiculos * proporcionBus).toInt
+    val cantCamion: Int = round(cantVehiculos * proporcionCamion).toInt
+    val cantMotoTaxi: Int = round(cantVehiculos * proporcionMotoTaxi).toInt
 
     var contCarro: Int = 0
     var contMoto: Int = 0
@@ -191,59 +201,67 @@ object Simulacion extends Runnable{
     var contCamion: Int = 0
     var contMotoTaxi: Int = 0
 
-    while (vehiculos.size < cantVehiculos) {
+    var index: Int = 0
+    var puedeIngresarVehiculo: Boolean = false
 
+    while (index < cantVehiculos) {
       val vehiculo = Vehiculo.generarVehiculo
-      vehiculos += vehiculo
 
-      if (vehiculo.getClass == classOf[Carro] && contCarro < cantCarro) contCarro += 1
+      if (vehiculo.getClass == classOf[Carro] && contCarro < cantCarro) {
+        contCarro += 1
+        puedeIngresarVehiculo = true
+      }
+      else if (vehiculo.getClass == classOf[Moto] && contMoto < cantMoto) {
+        contMoto += 1
+        puedeIngresarVehiculo = true
+      }
+      else if (vehiculo.getClass == classOf[Bus] && contBus < cantBus) {
+        contBus += 1
+        puedeIngresarVehiculo = true
+      }
+      else if (vehiculo.getClass == classOf[Camion] && contCamion < cantCamion) {
+        contCamion += 1
+        puedeIngresarVehiculo = true
+      }
+      else if (vehiculo.getClass == classOf[MotoTaxi] && contMotoTaxi < cantMotoTaxi) {
+        contMotoTaxi += 1
+        puedeIngresarVehiculo = true
+      }
+      else if(abs(cantVehiculos - index) <= 2) puedeIngresarVehiculo = true
 
-      else if (vehiculo.getClass == classOf[Moto] && contMoto < cantMoto) contMoto += 1
-
-      else if (vehiculo.getClass == classOf[Bus] && contBus < cantBus) contBus += 1
-
-      else if (vehiculo.getClass == classOf[Camion] && contCamion < cantCamion) contCamion += 1
-
-      else if (vehiculo.getClass == classOf[MotoTaxi] && contMotoTaxi < cantMotoTaxi) contMotoTaxi += 1
-
+      if(puedeIngresarVehiculo) {
+        index += 1
+        vehiculos(index) = vehiculo
+        puedeIngresarVehiculo = false
+      }
     }
   }
 
   def crearViajesVehiculos(): Unit ={
+    val cantIntersecciones = intersecciones.size
 
-    for(i <- 0 to vehiculos.size){
+    for(index <- 0 to cantVehiculos){
+      val indexOrigenAleat: Int = Random.nextInt(cantIntersecciones)
+      var indexDestinoAleat: Int = Random.nextInt(cantIntersecciones)
 
-      val origenAleat: Int = Random.nextInt(intersecciones.size)
-      var destinoAleat: Int = Random.nextInt(intersecciones.size)
+      while(indexOrigenAleat == indexDestinoAleat) indexDestinoAleat = Random.nextInt(cantIntersecciones)
 
-      while(origenAleat == destinoAleat) destinoAleat = Random.nextInt(intersecciones.size)
+      val origen: Interseccion = intersecciones(indexOrigenAleat)
+      val destino: Interseccion = intersecciones(indexDestinoAleat)
 
-      // listaDeVehiculos += new VehiculoViaje(vehiculos(i), intersecciones(origenAleat),
-      //  intersecciones(destinoAleat), )
-
-      // Falta el cuarto argumento, el cual sería el camino
+      vehiculosViajes(index) = new VehiculoViaje(vehiculos(index), origen, destino,
+        grafo.get(origen).shortestPathTo.grafo.get(destino))
     }
-
-  }
-
-  def iniciarSimulacion(): Unit = {
-
-    cargarParametros()
-    crearVehiculos()
-    crearViajesVehiculos()
-    run()
-
   }
 
   def run(): Unit = {
-
     while (continuarSimulacion) {
       vehiculosViajes.foreach(_.mover(dt))
       t += dt
       Grafico.graficarVehiculos(vehiculosViajes)
       Thread.sleep(tiempoDormir)
+
+      if(VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) continuarSimulacion = false
     }
-
   }
-
 }

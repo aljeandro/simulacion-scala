@@ -11,12 +11,9 @@ object GrafoVia {
   val grafo = Graph[Interseccion, WLUnDiEdge]()
 
   def construir(vias: Array[Via]): Unit = {
-
-    val intersecciones: Array[Interseccion] = (vias.map(via => via.origen) ++ vias.map(via => via.fin)).distinct
-
-    intersecciones.foreach(interseccion => grafo.add(interseccion))
+    val intersecciones: Array[Interseccion] = (vias.map(_.origen) ++ vias.map(_.fin)).distinct
+    intersecciones.foreach(grafo.add(_))
 
     vias.foreach(via => grafo.add(WLUnDiEdge(via.origen, via.fin)(via.longitud, via.nombreIdentificador())))
   }
-
 }

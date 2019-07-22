@@ -16,5 +16,4 @@ class Via(
   type T = Interseccion
 
   def nombreIdentificador(): String = s"$nombre desde ${origen.nombre} hasta ${fin.nombre}"
-
 }

@@ -9,11 +9,11 @@ class Sentido {
 
 object Sentido{
 
-  def dobleVia: Unit = {
+  def dobleVia: Sentido = {
 
   }
 
-  def unaVia: Unit ={
+  def unaVia: Sentido ={
 
   }
 

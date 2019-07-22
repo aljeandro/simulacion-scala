@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-
-package infraestructura.via
->>>>>>> 9cfe92a0a65995af48931ab862d1c679a60194bc
 
 package infraestructura.via
 

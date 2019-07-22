@@ -1,7 +1,9 @@
 
 package geometria
 
-import scala.math._
+import scala.math.hypot
+import scala.math.toDegrees
+import scala.math.atan
 
 trait Recta{
   type T <: Punto
