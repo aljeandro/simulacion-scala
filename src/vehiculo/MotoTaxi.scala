@@ -6,7 +6,6 @@ import scala.util.Random
 class MotoTaxi extends Vehiculo() {
 
   val placa: String = {
-
     val letra1: String = Random.alphanumeric.filter(_.isLetter).head.toString
     val letra2: String = Random.alphanumeric.filter(_.isLetter).head.toString
     val letra3: String = Random.alphanumeric.filter(_.isLetter).head.toString
@@ -17,5 +16,4 @@ class MotoTaxi extends Vehiculo() {
 
     s"$num1$num2$num3$letra1$letra2$letra3"
   }
-
 }

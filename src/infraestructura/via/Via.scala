@@ -15,5 +15,7 @@ class Via(
          ) extends Recta {
   type T = Interseccion
 
-  def nombreIdentificador(): String = s"$nombre desde ${origen.nombre} hasta ${fin.nombre}"
+  def identificadorOrigenFin(): String = s"$nombre desde ${origen.nombre} hasta ${fin.nombre}"
+
+  def identificadorFinOrigen(): String = s"$nombre desde ${origen.nombre} hasta ${fin.nombre}"
 }

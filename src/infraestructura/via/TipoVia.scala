@@ -1,14 +1,14 @@
 
 package infraestructura.via
 
-class TipoVia(private val nombre: String)
+class TipoVia(private val _nombre: String){
 
-// El identificador debe ser el nombre y el constructor debe ser privado
+  def nombre: String = _nombre
+}
 
 object TipoVia{
 
   def apply(nombre: String): TipoVia ={
     new TipoVia(nombre)
   }
-
 }

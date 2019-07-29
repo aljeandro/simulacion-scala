@@ -1,20 +1,18 @@
 
 package infraestructura.via
 
-class Sentido {
+class Sentido(private val _nombre: String) {
 
+  def nombre: String = _nombre
 }
-
-// El identificador debe ser el nombre y el constructor debe ser privado
 
 object Sentido{
 
   def dobleVia: Sentido = {
-
+    new Sentido("dobleVia")
   }
 
   def unaVia: Sentido ={
-
+    new Sentido("unaVia")
   }
-
 }
