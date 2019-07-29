@@ -21,7 +21,6 @@ class Velocidad(private var _magnitud: Double, private var _angulo: Angulo) {
 
 
 object Velocidad{
-
   def aKilometrosPorHora(metrosPorSegundo: Double): Double = metrosPorSegundo * (18/5)
 
   def aMetrosPorSegundo(kilometrosPorHora: Double): Double = kilometrosPorHora * (5/18)

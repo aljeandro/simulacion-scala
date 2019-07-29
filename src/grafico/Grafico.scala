@@ -88,7 +88,7 @@ object Grafico{
         * dicho objeto está dado por el nombreIdentificador de la vía.
         */
 
-      val serieVia: XYSeries = new XYSeries(via.nombreIdentificador().asInstanceOf[Comparable[String]])
+      val serieVia: XYSeries = new XYSeries(via.identificadorOrigenFin().asInstanceOf[Comparable[String]])
 
       serieVia.add(via.origen.x, via.origen.y)
       serieVia.add(via.fin.x, via.fin.y)

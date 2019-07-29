@@ -3,47 +3,45 @@ package vehiculo
 
 import infraestructura.Interseccion
 import grafo.GrafoVia
+import simulacion.Simulacion
+import geometria.Punto
 
-import scala.collection.mutable.ArrayBuffer
-import scala.math.toDegrees
-import scala.math.atan
-import scala.math.abs
+import scala.collection.mutable.{Queue, ArrayBuffer}
 
 class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destino: Interseccion,
-                    val camino: GrafoVia.grafo.Path) {
+                    val camino: Option[GrafoVia.grafo.Path]) {
 
-  val nodos = camino.get.nodes
-  var nodoInicio: Interseccion = origen
-  var indexNodo: Int = 1
-  var nodoFin: Interseccion = nodos(indexNodo)
+  val listaViasCamino = {
+    camino.get.edges.toList.map(_.toOuter.label).
+      map(label => Simulacion.vias.filter(via => via.identificadorOrigenFin() == label).head)
+  }
+
+  val colaViasCamino = Queue(listaViasCamino: _*)
+  private var viaActual = colaViasCamino.dequeue()
+  vehiculo.velocidad.angulo.grados = viaActual.angulo
 
   var vehiculoEnDestino: Boolean = false
 
   def mover(dt: Double): Unit = {
-    if(!vehiculoEnDestino){
-      if(estaEnInterseccion(dt: Double)){
-        if(nodoFin != destino){
-          nodoInicio = nodoFin
-          indexNodo += 1
-          nodoFin = nodos(indexNodo)
-          vehiculo.velocidad.angulo.grados =
-            toDegrees(atan(abs(nodoInicio.y - nodoFin.y) / abs(nodoInicio.x - nodoFin.x)))
-          vehiculo.posicion = nodoInicio
-        }
-        else{
-          VehiculoViaje.vehiculosEnSuDestino += vehiculo
-          vehiculoEnDestino = true
+    if (!vehiculoEnDestino){
+      if (colaViasCamino.nonEmpty) {
+        if (estaEnInterseccion(dt)){
+          viaActual = colaViasCamino.dequeue()
+          vehiculo.velocidad.angulo.grados = viaActual.angulo
+          vehiculo.posicion = viaActual.origen
         }
       }
-      else vehiculo.aumentarPosicion(dt)
+      vehiculo.aumentarPosicion(dt)
     }
+    else VehiculoViaje.vehiculosEnSuDestino += vehiculo
+    if (vehiculo.posicion == destino.asInstanceOf[Punto]) vehiculoEnDestino = true
   }
 
   def estaEnInterseccion(dt: Double): Boolean = {
-    val extremoIzquierdoIntervaloX = nodoFin.x - vehiculo.velocidad.velocidadDireccionX() * dt
-    val extremoDerechoIntervaloX = nodoFin.x + vehiculo.velocidad.velocidadDireccionX() * dt
-    val extremoIzquierdoIntervaloY = nodoFin.y - vehiculo.velocidad.velocidadDireccionY() * dt
-    val extremoDerechoIntervaloY = nodoFin.y + vehiculo.velocidad.velocidadDireccionY() * dt
+    val extremoIzquierdoIntervaloX = viaActual.fin.x - vehiculo.velocidad.velocidadDireccionX() * dt
+    val extremoDerechoIntervaloX = viaActual.fin.x + vehiculo.velocidad.velocidadDireccionX() * dt
+    val extremoIzquierdoIntervaloY = viaActual.origen.y - vehiculo.velocidad.velocidadDireccionY() * dt
+    val extremoDerechoIntervaloY = viaActual.origen.y + vehiculo.velocidad.velocidadDireccionY() * dt
 
     if (
         (vehiculo.posicion.x >= extremoIzquierdoIntervaloX) &&
@@ -55,8 +53,6 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
   }
 }
 
-
 object VehiculoViaje{
-
   var vehiculosEnSuDestino: ArrayBuffer[Vehiculo] = _
 }
