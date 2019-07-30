@@ -105,9 +105,19 @@ object Grafico{
 
     def crearEtiquetaInterseccion(interseccion: Interseccion): Unit = {
 
-      val etiqueta: XYTextAnnotation = new XYTextAnnotation(interseccion.nombre, interseccion.x, interseccion.y)
+      var aumentoPosicionY = 150
+      if ((interseccion.nombre == "Boliv con 65") ||
+          (interseccion.nombre == "M. Laura Auto")){
+        aumentoPosicionY = -150
+      }
+
+      val etiqueta: XYTextAnnotation = new XYTextAnnotation(
+        interseccion.nombre,
+        interseccion.x,
+        interseccion.y + aumentoPosicionY)
+
       etiqueta.setPaint(interseccion.color)
-      etiqueta.setFont(new Font("SansSerif", Font.PLAIN, 12))
+      etiqueta.setFont(new Font("SansSerif", Font.PLAIN, 9))
       trazadoGrafica.addAnnotation(etiqueta)
     }
 

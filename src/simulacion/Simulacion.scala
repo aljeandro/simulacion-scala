@@ -44,6 +44,8 @@ object Simulacion extends Runnable{
     crearVehiculos()
     construirGrafo()
     crearViajesVehiculos()
+    Grafico.dibujarMapa(vias)
+    Grafico.graficarVehiculos(vehiculosViajes)
     run()
   }
 
