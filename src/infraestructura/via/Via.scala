@@ -17,5 +17,5 @@ class Via(
 
   def identificadorOrigenFin(): String = s"$nombre desde ${origen.nombre} hasta ${fin.nombre}"
 
-  def identificadorFinOrigen(): String = s"$nombre desde ${origen.nombre} hasta ${fin.nombre}"
+  def identificadorFinOrigen(): String = s"$nombre desde ${fin.nombre} hasta ${origen.nombre}"
 }
