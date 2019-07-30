@@ -1,9 +1,7 @@
 
 package geometria
 
-import scala.math.hypot
-import scala.math.toDegrees
-import scala.math.atan
+import scala.math.{hypot, toDegrees, atan}
 
 trait Recta{
   type T <: Punto
@@ -11,7 +9,7 @@ trait Recta{
   val origen: T
   val fin: T
 
-  def longitud: Double = hypot(origen.x - fin.x, origen.y - fin.y)
+  def longitud: Double = hypot(fin.x - origen.x, fin.y - origen.y)
 
-  def angulo: Double = toDegrees(atan((origen.y - fin.y) / (origen.x - fin.x)))
+  def angulo: Double = toDegrees(atan((fin.y - origen.y) / (fin.x - origen.x)))
 }

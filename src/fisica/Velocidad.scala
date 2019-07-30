@@ -1,9 +1,7 @@
 
 package fisica
 
-import scala.math.cos
-import scala.math.sin
-import scala.math.toRadians
+import scala.math.{cos, sin, toRadians}
 
 import geometria.Angulo
 
