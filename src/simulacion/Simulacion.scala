@@ -15,7 +15,6 @@ import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 import scala.math.{abs, round}
 
-
 object Simulacion extends Runnable{
 
   var intersecciones: Array[Interseccion] = _
@@ -26,8 +25,8 @@ object Simulacion extends Runnable{
   var tiempoDormir: Int = _
   var minVehiculos: Int = _
   var maxVehiculos: Int = _
-  var minVelocidad: Int = 20
-  var maxVelocidad: Int = 60
+  var minVelocidad: Int = _
+  var maxVelocidad: Int = _
   var proporcionCarro: Double = _
   var proporcionMoto: Double = _
   var proporcionBus: Double = _
@@ -38,7 +37,6 @@ object Simulacion extends Runnable{
   var cantVehiculos: Int = _
   var vehiculos: Array[Vehiculo] = _
   var vehiculosViajes: Array[VehiculoViaje] = _
-
 
   def iniciarSimulacion(): Unit = {
     cargarInfraestructura()
@@ -179,6 +177,8 @@ object Simulacion extends Runnable{
     tiempoDormir = 1
     minVehiculos = 100
     maxVehiculos = 200
+    minVelocidad = 40
+    maxVelocidad = 100
     proporcionCarro = 0.4
     proporcionMoto = 0.3
     proporcionBus = 0.15
@@ -242,9 +242,7 @@ object Simulacion extends Runnable{
     }
   }
 
-  def construirGrafo(): Unit = {
-    GrafoVia.construir(vias)
-  }
+  def construirGrafo(): Unit = GrafoVia.construir(vias)
 
   def crearViajesVehiculos(): Unit = {
     val cantIntersecciones = intersecciones.size
