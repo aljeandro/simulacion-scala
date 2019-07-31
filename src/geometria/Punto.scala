@@ -1,4 +1,4 @@
 
 package geometria
 
-case class Punto(val x: Double, val y: Double)
+case class Punto(var x: Double, var y: Double)

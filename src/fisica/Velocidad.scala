@@ -6,7 +6,6 @@ import scala.math.{cos, sin, toRadians}
 import geometria.Angulo
 
 class Velocidad(private var _magnitud: Double, private var _angulo: Angulo) {
-
   def magnitud_=(magnitud: Double): Unit = _magnitud = magnitud
   def magnitud: Double = _magnitud
 
@@ -20,6 +19,5 @@ class Velocidad(private var _magnitud: Double, private var _angulo: Angulo) {
 
 object Velocidad{
   def aKilometrosPorHora(metrosPorSegundo: Double): Double = metrosPorSegundo * (18/5)
-
   def aMetrosPorSegundo(kilometrosPorHora: Double): Double = kilometrosPorHora * (5/18)
 }

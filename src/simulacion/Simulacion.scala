@@ -19,6 +19,7 @@ object Simulacion extends Runnable{
 
   var intersecciones: Array[Interseccion] = _
   var vias: Array[Via] = _
+  var viasDirigidas: Array[Via] = _
 
   var t: Int = _
   var dt: Int = _
@@ -35,8 +36,15 @@ object Simulacion extends Runnable{
   var continuarSimulacion: Boolean = _
 
   var cantVehiculos: Int = _
+  var cantCarro: Int = _
+  var cantMoto: Int = _
+  var cantBus: Int = _
+  var cantCamion: Int = _
+  var cantMotoTaxi: Int = _
+
   var vehiculos: Array[Vehiculo] = _
   var vehiculosViajes: Array[VehiculoViaje] = _
+
 
   def iniciarSimulacion(): Unit = {
     cargarInfraestructura()
@@ -44,8 +52,8 @@ object Simulacion extends Runnable{
     crearVehiculos()
     construirGrafo()
     crearViajesVehiculos()
-    Grafico.dibujarMapa(vias)
-    Grafico.graficarVehiculos(vehiculosViajes)
+    //Grafico.dibujarMapa(vias)
+    //Grafico.graficarVehiculos(vehiculosViajes)
     run()
   }
 
@@ -173,8 +181,8 @@ object Simulacion extends Runnable{
   }
 
   def cargarParametros(): Unit = {
-    // TODO: Cargar estos datos del Json
     t = 0
+    // TODO: Cargar estos datos del Json
     dt = 1
     tiempoDormir = 1
     minVehiculos = 100
@@ -192,11 +200,11 @@ object Simulacion extends Runnable{
 
   def crearVehiculos(): Unit = {
     cantVehiculos = Random.nextInt(maxVehiculos - minVehiculos) + minVehiculos
-    val cantCarro: Int = round(cantVehiculos * proporcionCarro).toInt
-    val cantMoto: Int = round(cantVehiculos * proporcionMoto).toInt
-    val cantBus: Int = round(cantVehiculos * proporcionBus).toInt
-    val cantCamion: Int = round(cantVehiculos * proporcionCamion).toInt
-    val cantMotoTaxi: Int = round(cantVehiculos * proporcionMotoTaxi).toInt
+    cantCarro = round(cantVehiculos * proporcionCarro).toInt
+    cantMoto = round(cantVehiculos * proporcionMoto).toInt
+    cantBus = round(cantVehiculos * proporcionBus).toInt
+    cantCamion = round(cantVehiculos * proporcionCamion).toInt
+    cantMotoTaxi = round(cantVehiculos * proporcionMotoTaxi).toInt
 
     var contCarro: Int = 0
     var contMoto: Int = 0
@@ -272,10 +280,16 @@ object Simulacion extends Runnable{
     while (continuarSimulacion) {
       vehiculosViajes.foreach(_.mover(dt))
       t += dt
-      Grafico.graficarVehiculos(vehiculosViajes)
+      //Grafico.graficarVehiculos(vehiculosViajes)
       Thread.sleep(tiempoDormir)
 
       if(VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) continuarSimulacion = false
     }
+  }
+
+  def generarResultadoSimulacion(): Unit = { // TODO
+
+
+
   }
 }
