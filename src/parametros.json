@@ -1,21 +1,16 @@
 {
   "pametrosSimulacion": {
-    "dt": 1,
-    "tiempoDormir": 1,
+    "dt": 0.5,
+    "tRefresh": 1,
     "vehiculos": {
-    "minimo": 100,
-    "maximo": 200
-    },
+      "minimo": 100,
+      "maximo": 200   },
     "velocidad": {
-    "minimo": 40,
-    "maximo": 100
-    },
+      "minimo": 20,
+      "maximo": 30   },
     "proporciones": {
-    "carros": 0.4,
-    "motos": 0.3,
-    "buses": 0.15,
-    "camiones": 0.1,
-    "motoTaxis": 0.05
-    }
-  }
-}
+      "carros": 0.4,
+      "motos": 0.3,
+      "buses": 0.15,
+      "camiones": 0.1,
+      "motoTaxis": 0.05   }  } }

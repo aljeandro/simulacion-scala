@@ -10,6 +10,7 @@ import grafo.GrafoVia
 import vehiculo._
 import infraestructura.via._
 import infraestructura.Interseccion
+import resultadosSimulacion.{Json, ResultadosSimulacion}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
@@ -21,9 +22,10 @@ object Simulacion extends Runnable{
   var vias: Array[Via] = _
   var viasDirigidas: Array[Via] = _
 
-  var t: Int = _
-  var dt: Int = _
-  var tiempoDormir: Int = _
+  var tiempoSimulado: Double = _
+  var tiempoReal: Double = _
+  var dt: Double = _
+  var tiempoDormir: Long = _
   var minVehiculos: Int = _
   var maxVehiculos: Int = _
   var minVelocidad: Int = _
@@ -46,15 +48,22 @@ object Simulacion extends Runnable{
   var vehiculosViajes: Array[VehiculoViaje] = _
 
 
+
   def iniciarSimulacion(): Unit = {
     cargarInfraestructura()
-    cargarParametros()         // TODO: Estos parámetros deben ser cargados desde el Json
-    crearVehiculos()
     construirGrafo()
+    Grafico.dibujarMapa(vias)
+
+    cargarParametros() // TODO: Mover estas 5 líneas a iniciarAnimacion() cuando se solucione el Keylistener en Grafico
+    crearVehiculos()
     crearViajesVehiculos()
-    //Grafico.dibujarMapa(vias)
-    //Grafico.graficarVehiculos(vehiculosViajes)
+    Grafico.graficarVehiculos(vehiculosViajes)
     run()
+
+  }
+
+  def iniciarAnimacion(): Unit = {
+
   }
 
   def cargarInfraestructura(): Unit = {
@@ -181,19 +190,19 @@ object Simulacion extends Runnable{
   }
 
   def cargarParametros(): Unit = {
-    t = 0
-    // TODO: Cargar estos datos del Json
-    dt = 1
-    tiempoDormir = 1
-    minVehiculos = 100
-    maxVehiculos = 200
-    minVelocidad = 40
-    maxVelocidad = 100
-    proporcionCarro = 0.4
-    proporcionMoto = 0.3
-    proporcionBus = 0.15
-    proporcionCamion = 0.1
-    proporcionMotoTaxi = 0.05
+    tiempoSimulado = 0
+    tiempoReal = 0
+    dt = Json.tiempoDt
+    tiempoDormir = Json.tiempoDormir
+    minVehiculos = Json.vehiculosMinimo
+    maxVehiculos = Json.vehiculosMaximo
+    minVelocidad = Json.velocidadMinima
+    maxVelocidad = Json.velocidadMaxima
+    proporcionCarro = Json.proporcionCarros
+    proporcionMoto = Json.proporcionMotos
+    proporcionBus = Json.proporcionBuses
+    proporcionCamion = Json.proporcionCamiones
+    proporcionMotoTaxi = Json.proporcionMotoTaxis
 
     continuarSimulacion = true
   }
@@ -279,17 +288,24 @@ object Simulacion extends Runnable{
   def run(): Unit = {
     while (continuarSimulacion) {
       vehiculosViajes.foreach(_.mover(dt))
-      t += dt
-      //Grafico.graficarVehiculos(vehiculosViajes)
+      tiempoSimulado += dt
+      tiempoReal += tiempoDormir
+      Grafico.graficarVehiculos(vehiculosViajes)
       Thread.sleep(tiempoDormir)
 
-      if(VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) continuarSimulacion = false
+      if(VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos || !continuarSimulacion) {
+        continuarSimulacion = false
+        generarResultadoSimulacion()
+      }
     }
   }
 
-  def generarResultadoSimulacion(): Unit = { // TODO
-
-
-
+  def generarResultadoSimulacion(): Unit = {
+    Json.escribirResultados(new ResultadosSimulacion(
+      vias,
+      intersecciones,
+      vehiculosViajes,
+      tiempoSimulado,
+      tiempoReal))
   }
 }

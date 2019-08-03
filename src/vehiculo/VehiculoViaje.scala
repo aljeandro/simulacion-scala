@@ -17,9 +17,11 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
 
   val colaViasCamino = Queue(listaViasCamino: _*)
 
-  println("Intersecciones a recorrer del vehiculo " + vehiculo.placa)  // TODO: Eliminar
-  colaViasCamino.foreach(via => println(via.origen))  // TODO: Eliminar
-  println(colaViasCamino.last.fin)  // TODO: Eliminar
+  //println(s"origen ${origen.nombre}")
+  //println(s"destino ${destino.nombre}")
+  //println("Intersecciones a recorrer del vehiculo " + vehiculo.placa)  // TODO: Eliminar
+  //colaViasCamino.foreach(via => println(via.origen))  // TODO: Eliminar
+  //println(colaViasCamino.last.fin)  // TODO: Eliminar
 
   private var viaActual = colaViasCamino.dequeue()
   vehiculo.velocidad.angulo.grados = viaActual.angulo
@@ -30,7 +32,7 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
     if (!vehiculoEnDestino){
       if (estaEnInterseccion(dt)){
 
-        println("El vehiculo " + vehiculo.placa + " entró en la intersección: " + viaActual.fin)  // TODO: Eliminar
+        //println("El vehiculo " + vehiculo.placa + " entró en la intersección: " + viaActual.fin)  // TODO: Eliminar
 
         vehiculo.posicion.x = viaActual.fin.x
         vehiculo.posicion.y = viaActual.fin.y
@@ -39,7 +41,7 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
           vehiculoEnDestino = true
           VehiculoViaje.vehiculosEnSuDestino += vehiculo
 
-          println("El vehiculo " + vehiculo.placa + " llegó a su destino")  // TODO: Eliminar
+          //println("El vehiculo " + vehiculo.placa + " llegó a su destino")  // TODO: Eliminar
 
         }
         else{
@@ -70,5 +72,5 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
 }
 
 object VehiculoViaje{
-  var vehiculosEnSuDestino: ArrayBuffer[Vehiculo] = _
+  var vehiculosEnSuDestino: ArrayBuffer[Vehiculo] = ArrayBuffer[Vehiculo]()
 }

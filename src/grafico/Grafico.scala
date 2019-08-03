@@ -15,6 +15,8 @@ import org.jfree.util.ShapeUtilities
 import simulacion.Simulacion
 import vehiculo.{Bus, Camion, Carro, Moto, MotoTaxi, Vehiculo, VehiculoViaje}
 
+import scala.collection.mutable.ArrayBuffer
+
 
 object Grafico{
 
@@ -52,12 +54,15 @@ object Grafico{
   val trazadoGrafica: XYPlot = grafica.getXYPlot
   val renderizador: XYLineAndShapeRenderer = new XYLineAndShapeRenderer(true, false)
   var seriesVias: Array[XYSeries] = Array()
+  var seriesVehiculos: ArrayBuffer[XYSeries] = ArrayBuffer()
+
 
   trazadoGrafica.setRenderer(renderizador)
   grafica.removeLegend()  // Se remueve las leyendas del gráfico que aparece en la parte inferior.
   trazadoGrafica.getRangeAxis().setVisible(false) // Se remueve el eje Y.
   trazadoGrafica.getDomainAxis().setVisible(false)  // Se remueve el eje X.
   trazadoGrafica.setBackgroundPaint(Color.white)  // Fondo blanco para el gráfico.
+
 
   marcoGrafica.addKeyListener(new KeyListener {
 
@@ -67,8 +72,9 @@ object Grafico{
 
       val key : Int = keyEvent.getKeyCode
 
-      if (key == KeyEvent.VK_F5) Simulacion.iniciarSimulacion()
-
+      if (key == KeyEvent.VK_F5) {
+        Simulacion.iniciarAnimacion()
+      }
       else if (key == KeyEvent.VK_F6) {Simulacion.continuarSimulacion = false}
 
     }
@@ -80,6 +86,7 @@ object Grafico{
   def dibujarMapa(vias: Array[Via]): Unit = {
 
     val lineaParametro = new BasicStroke(4.0f)
+
 
     def crearSerieVia(via: Via): XYSeries = {
       /**
@@ -149,8 +156,11 @@ object Grafico{
       serieVehiculo.add(vehiculo.posicion.x, vehiculo.posicion.y)
 
       coleccionSeries.addSeries(serieVehiculo)
+      seriesVehiculos += serieVehiculo
 
       renderizador.setSeriesPaint(coleccionSeries.indexOf(serieVehiculo), vehiculoViaje.destino.color)
+      renderizador.setSeriesLinesVisible(coleccionSeries.indexOf(serieVehiculo), false)
+      renderizador.setSeriesShapesVisible(coleccionSeries.indexOf(serieVehiculo), true)
 
       if (vehiculo.getClass == classOf[Carro]){
 
@@ -171,7 +181,6 @@ object Grafico{
 
         renderizador.setSeriesShape(
           coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createRegularCross(3, 1))
-
       }
       else if (vehiculo.getClass == classOf[Camion]){
 
@@ -180,17 +189,14 @@ object Grafico{
       }
     }
 
-    /* Cada vez que se vaya a graficar los vehículos, se remueven todas las series de coleccionSeries para poder
-    * actualizar las series */
-    coleccionSeries.removeAllSeries()
+    seriesVehiculos.foreach(coleccionSeries.removeSeries(_))
+    seriesVehiculos.clear()
+
 
     // Crea la representación en el gráfico de los vehiculos
     viajesVehiculos.foreach(vehiculoViaje => crearRepresentacionVehiculo(vehiculoViaje))
 
-    /* A ColeccionSeries le agrego nuevamente las seriesVias */
-    seriesVias.foreach(serie => coleccionSeries.addSeries(serie))
 
-    marcoGrafica.setVisible(true)
-
+    // seriesVias.foreach(serie => coleccionSeries.addSeries(serie))
   }
 }
