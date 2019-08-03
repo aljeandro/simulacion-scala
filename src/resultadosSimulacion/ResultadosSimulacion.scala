@@ -78,10 +78,16 @@ class ResultadosSimulacion(
     vehiculoViajes.map(viaje => viaje.vehiculo).map(vehiculo => vehiculo.velocidad.magnitud).sum / vehiculoViajes.length
   }
 
-  def distanciaMinima: Double = 0 // TODO Sin terminar
+  def distanciaMinima: Double = {
+    vehiculoViajes.map(_.listaViasCamino.head).map(_.longitud).min
+  }
 
-  def distanciaMaxima: Double = 0 // TODO Sin terminar
+  def distanciaMaxima: Double = {
+    vehiculoViajes.map(_.listaViasCamino.head).map(_.longitud).max
+  }
 
-  def distanciaPromedio: Double = 0 // TODO Sin Terminar
+  def distanciaPromedio: Double = {
+    vehiculoViajes.map(_.listaViasCamino.head).map(_.longitud).sum / vehiculoViajes.map(_.listaViasCamino.head).length
+  }
 
 }
