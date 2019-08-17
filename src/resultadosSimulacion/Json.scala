@@ -13,11 +13,11 @@ import scala.io.Source
 object Json {
 
   val archivoResultadosJson = new PrintWriter(
-    new File("C:/Users/Nicolas/Desktop/simulacion-scala/src/resultados.json")
+    new File("src/resultados.json")
   )
 
   implicit val formats = DefaultFormats
-  val stringJson = Source.fromFile("C:/Users/Nicolas/Desktop/simulacion-scala/src/parametros.json").getLines().mkString
+  val stringJson = Source.fromFile(new File("src/parametros.json")).getLines().mkString
   val json = parse(stringJson)
 
   def escribirResultados(resultados: ResultadosSimulacion): Unit = {
