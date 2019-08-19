@@ -7,8 +7,8 @@ import scala.util.Random
 
 abstract case class Vehiculo() extends Movil with MovimientoUniforme{
 
-  protected var _velocidad: Velocidad = new Velocidad(0, new Angulo(0))
-  protected var _posicion: Punto = new Punto(0, 0)
+  protected var _velocidad: Velocidad = new Velocidad(0, Angulo(0))
+  protected var _posicion: Punto = Punto(0, 0)
   val placa: String
 
   def velocidad: Velocidad = _velocidad
@@ -22,13 +22,18 @@ abstract case class Vehiculo() extends Movil with MovimientoUniforme{
 
 object Vehiculo{
 
-  def generarVehiculo: Vehiculo = {
-    val numAleatorio: Int = Random.nextInt(5)
+  var proporcionCarro: Double = _
+  var proporcionMoto: Double = _
+  var proporcionBus: Double = _
+  var proporcionCamion: Double = _
 
-    if (numAleatorio == 0) new Carro()
-    else if (numAleatorio == 1) new Moto()
-    else if (numAleatorio == 2) new Bus()
-    else if (numAleatorio == 3) new Camion()
-    else new MotoTaxi()
+  def generarVehiculo: Vehiculo = {
+    val numAleatorio: Double = Random.nextDouble() // Valor aleatorio entre 0 (inclusivo) y 1 (exclusivo)
+
+    if (0 < numAleatorio && numAleatorio <= proporcionCarro) new Carro
+    else if (proporcionCarro < numAleatorio && numAleatorio <= proporcionCarro + proporcionMoto) new Moto
+    else if (proporcionCarro + proporcionMoto < numAleatorio && numAleatorio <= proporcionCarro + proporcionMoto + proporcionBus) new Bus
+    else if (proporcionCarro + proporcionMoto + proporcionBus < numAleatorio && numAleatorio <= proporcionCarro + proporcionMoto + proporcionBus + proporcionCamion) new Camion
+    else new MotoTaxi
   }
 }

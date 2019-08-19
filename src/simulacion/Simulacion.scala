@@ -14,9 +14,9 @@ import resultadosSimulacion.{Json, ResultadosSimulacion}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
-import scala.math.{abs, round}
+import vehiculo.Vehiculo
 
-object Simulacion extends Runnable{
+object Simulacion extends Runnable {
 
   var intersecciones: Array[Interseccion] = _
   var vias: Array[Via] = _
@@ -30,11 +30,6 @@ object Simulacion extends Runnable{
   var maxVehiculos: Int = _
   var minVelocidad: Int = _
   var maxVelocidad: Int = _
-  var proporcionCarro: Double = _
-  var proporcionMoto: Double = _
-  var proporcionBus: Double = _
-  var proporcionCamion: Double = _
-  var proporcionMotoTaxi: Double = _
   var continuarSimulacion: Boolean = _
 
   var cantVehiculos: Int = _
@@ -46,7 +41,6 @@ object Simulacion extends Runnable{
 
   var vehiculos: Array[Vehiculo] = _
   var vehiculosViajes: Array[VehiculoViaje] = _
-
 
 
   def iniciarSimulacion(): Unit = {
@@ -198,31 +192,19 @@ object Simulacion extends Runnable{
     maxVehiculos = Json.vehiculosMaximo
     minVelocidad = Json.velocidadMinima
     maxVelocidad = Json.velocidadMaxima
-    proporcionCarro = Json.proporcionCarros
-    proporcionMoto = Json.proporcionMotos
-    proporcionBus = Json.proporcionBuses
-    proporcionCamion = Json.proporcionCamiones
-    proporcionMotoTaxi = Json.proporcionMotoTaxis
+
+    Vehiculo.proporcionCarro = Json.proporcionCarros
+    Vehiculo.proporcionMoto = Json.proporcionMotos
+    Vehiculo.proporcionBus = Json.proporcionBuses
+    Vehiculo.proporcionCamion = Json.proporcionCamiones
 
     continuarSimulacion = true
   }
 
   def crearVehiculos(): Unit = {
     cantVehiculos = Random.nextInt(maxVehiculos - minVehiculos) + minVehiculos
-    cantCarro = round(cantVehiculos * proporcionCarro).toInt
-    cantMoto = round(cantVehiculos * proporcionMoto).toInt
-    cantBus = round(cantVehiculos * proporcionBus).toInt
-    cantCamion = round(cantVehiculos * proporcionCamion).toInt
-    cantMotoTaxi = round(cantVehiculos * proporcionMotoTaxi).toInt
-
-    var contCarro: Int = 0
-    var contMoto: Int = 0
-    var contBus: Int = 0
-    var contCamion: Int = 0
-    var contMotoTaxi: Int = 0
 
     var index: Int = 0
-    var puedeIngresarVehiculo: Boolean = false
 
     vehiculos = new Array[Vehiculo](cantVehiculos)
     vehiculosViajes = new Array[VehiculoViaje](cantVehiculos)
@@ -230,55 +212,28 @@ object Simulacion extends Runnable{
 
     while (index < cantVehiculos) {
       val vehiculo = Vehiculo.generarVehiculo
-
-      if (vehiculo.getClass == classOf[Carro] && contCarro < cantCarro) {
-        contCarro += 1
-        puedeIngresarVehiculo = true
-      }
-      else if (vehiculo.getClass == classOf[Moto] && contMoto < cantMoto) {
-        contMoto += 1
-        puedeIngresarVehiculo = true
-      }
-      else if (vehiculo.getClass == classOf[Bus] && contBus < cantBus) {
-        contBus += 1
-        puedeIngresarVehiculo = true
-      }
-      else if (vehiculo.getClass == classOf[Camion] && contCamion < cantCamion) {
-        contCamion += 1
-        puedeIngresarVehiculo = true
-      }
-      else if (vehiculo.getClass == classOf[MotoTaxi] && contMotoTaxi < cantMotoTaxi) {
-        contMotoTaxi += 1
-        puedeIngresarVehiculo = true
-      }
-      else if(abs(cantVehiculos - index) <= 2) puedeIngresarVehiculo = true
-
-      if(puedeIngresarVehiculo) {
-        vehiculos(index) = vehiculo
-        puedeIngresarVehiculo = false
-        index += 1
-      }
+      vehiculos(index) = vehiculo
+      index += 1
     }
   }
 
   def construirGrafo(): Unit = GrafoVia.construir(vias)
 
   def crearViajesVehiculos(): Unit = {
-    val cantIntersecciones = intersecciones.size
+    val cantIntersecciones = intersecciones.length
 
-    for(index <- 0 to cantVehiculos - 1){
+    for (index <- 0 until cantVehiculos) {
       val indexOrigenAleat: Int = Random.nextInt(cantIntersecciones)
       var indexDestinoAleat: Int = Random.nextInt(cantIntersecciones)
 
-      while(indexOrigenAleat == indexDestinoAleat) indexDestinoAleat = Random.nextInt(cantIntersecciones)
+      while (indexOrigenAleat == indexDestinoAleat) indexDestinoAleat = Random.nextInt(cantIntersecciones)
 
       val origen: Interseccion = intersecciones(indexOrigenAleat)
       val destino: Interseccion = intersecciones(indexDestinoAleat)
 
       val vehiculoActual = vehiculos(index)
       vehiculoActual.posicion = origen
-      vehiculoActual.velocidad = new Velocidad(Random.nextInt(maxVelocidad - minVelocidad) + minVelocidad,
-        new Angulo(0))
+      vehiculoActual.velocidad = new Velocidad(Random.nextInt(maxVelocidad - minVelocidad) + minVelocidad, Angulo(0))
 
       vehiculosViajes(index) = new VehiculoViaje(vehiculoActual, origen, destino,
         GrafoVia.grafo.get(origen) shortestPathTo GrafoVia.grafo.get(destino))
@@ -293,7 +248,7 @@ object Simulacion extends Runnable{
       Grafico.graficarVehiculos(vehiculosViajes)
       Thread.sleep(tiempoDormir)
 
-      if(VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos || !continuarSimulacion) {
+      if (VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos || !continuarSimulacion) {
         continuarSimulacion = false
         generarResultadoSimulacion()
       }
