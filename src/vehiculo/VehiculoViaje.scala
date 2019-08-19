@@ -4,27 +4,23 @@ package vehiculo
 import infraestructura.Interseccion
 import grafo.GrafoVia
 import geometria.Punto
+import infraestructura.via.Via
 import simulacion.Simulacion
 
+import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, Queue}
 import scala.math.abs
 
 class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destino: Interseccion,
                     val camino: Option[GrafoVia.grafo.Path]) {
 
-  val listaViasCamino = camino.get.edges.toList.map(_.toOuter.label).
+  val listaViasCamino: List[Via] = camino.get.edges.toList.map(_.toOuter.label).
     map(label => Simulacion.viasDirigidas.filter(via => via.nombreIdentificador() == label).head)
 
-  val colaViasCamino = Queue(listaViasCamino: _*)
-
-  //println(s"origen ${origen.nombre}")
-  //println(s"destino ${destino.nombre}")
-  //println("Intersecciones a recorrer del vehiculo " + vehiculo.placa)  // TODO: Eliminar
-  //colaViasCamino.foreach(via => println(via.origen))  // TODO: Eliminar
-  //println(colaViasCamino.last.fin)  // TODO: Eliminar
+  val colaViasCamino: mutable.Queue[Via] = mutable.Queue(listaViasCamino: _*)
 
   private var viaActual = colaViasCamino.dequeue()
-  vehiculo.velocidad.angulo.grados = viaActual.angulo
+  vehiculo.velocidad.direccion.grados = viaActual.angulo
 
   var vehiculoEnDestino: Boolean = false
 
@@ -32,21 +28,16 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
     if (!vehiculoEnDestino){
       if (estaEnInterseccion(dt)){
 
-        //println("El vehiculo " + vehiculo.placa + " entró en la intersección: " + viaActual.fin)  // TODO: Eliminar
-
         vehiculo.posicion.x = viaActual.fin.x
         vehiculo.posicion.y = viaActual.fin.y
 
         if (vehiculo.posicion == destino.asInstanceOf[Punto]) {
           vehiculoEnDestino = true
           VehiculoViaje.vehiculosEnSuDestino += vehiculo
-
-          //println("El vehiculo " + vehiculo.placa + " llegó a su destino")  // TODO: Eliminar
-
         }
         else{
           viaActual = colaViasCamino.dequeue()
-          vehiculo.velocidad.angulo.grados = viaActual.angulo
+          vehiculo.velocidad.direccion.grados = viaActual.angulo
         }
       }
       else {

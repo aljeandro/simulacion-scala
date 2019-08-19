@@ -58,10 +58,10 @@ object Grafico{
 
 
   trazadoGrafica.setRenderer(renderizador)
-  grafica.removeLegend()  // Se remueve las leyendas del gráfico que aparece en la parte inferior.
-  trazadoGrafica.getRangeAxis().setVisible(false) // Se remueve el eje Y.
-  trazadoGrafica.getDomainAxis().setVisible(false)  // Se remueve el eje X.
-  trazadoGrafica.setBackgroundPaint(Color.white)  // Fondo blanco para el gráfico.
+  grafica.removeLegend()  // Se remueve las leyendas del gráfico que aparece en la parte inferior
+  trazadoGrafica.getRangeAxis().setVisible(false) // Se remueve el eje Y
+  trazadoGrafica.getDomainAxis().setVisible(false)  // Se remueve el eje X
+  trazadoGrafica.setBackgroundPaint(Color.white)  // Fondo blanco para el gráfico
 
 
   marcoGrafica.addKeyListener(new KeyListener {
@@ -104,10 +104,10 @@ object Grafico{
 
     def cambiarAparienciaVia(indexVia: Int): Unit = {
 
-      renderizador.setSeriesPaint(indexVia, Color.gray) // Configura el color gris para la vía.
-      renderizador.setSeriesStroke(indexVia, lineaParametro)  // Configura el grosor de la vía.
+      renderizador.setSeriesPaint(indexVia, Color.gray)
+      renderizador.setSeriesStroke(indexVia, lineaParametro)  // Configura el grosor de la vía
       renderizador.setSeriesShapesVisible(indexVia, false)  // Desactiva las figuras al inicio y fin de la vía
-      renderizador.setSeriesLinesVisible(indexVia, true)  // Activa la línea entre el inicio y final de la vía.
+      renderizador.setSeriesLinesVisible(indexVia, true)  // Activa la línea entre el inicio y final de la vía
     }
 
     def crearEtiquetaInterseccion(interseccion: Interseccion): Unit = {
@@ -145,13 +145,12 @@ object Grafico{
 
   }
 
-  def graficarVehiculos(viajesVehiculos: Array[VehiculoViaje]): Unit = {
-
+  def dibujarVehiculos(viajesVehiculos: Array[VehiculoViaje]): Unit = {
     def crearRepresentacionVehiculo(vehiculoViaje: VehiculoViaje): Unit = {
 
       val vehiculo: Vehiculo = vehiculoViaje.vehiculo
 
-      val serieVehiculo: XYSeries = new XYSeries(vehiculo.placa.asInstanceOf[Comparable[String]])
+      val serieVehiculo: XYSeries = new XYSeries(vehiculo.placa)
 
       serieVehiculo.add(vehiculo.posicion.x, vehiculo.posicion.y)
 
@@ -188,15 +187,14 @@ object Grafico{
           coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createDownTriangle(4))
       }
     }
-
-    seriesVehiculos.foreach(coleccionSeries.removeSeries(_))
-    seriesVehiculos.clear()
-
-
-    // Crea la representación en el gráfico de los vehiculos
     viajesVehiculos.foreach(vehiculoViaje => crearRepresentacionVehiculo(vehiculoViaje))
+  }
 
-
-    // seriesVias.foreach(serie => coleccionSeries.addSeries(serie))
+  def graficarVehiculos(viajesVehiculos: Array[VehiculoViaje]): Unit = {
+    viajesVehiculos.foreach(vehiculoViaje => {
+      val vehiculo = coleccionSeries.getSeries(vehiculoViaje.vehiculo.placa)
+      vehiculo.clear()
+      vehiculo.add(vehiculoViaje.vehiculo.posicion.x, vehiculoViaje.vehiculo.posicion.y)
+    })
   }
 }

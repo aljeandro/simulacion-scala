@@ -51,9 +51,8 @@ object Simulacion extends Runnable {
     cargarParametros() // TODO: Mover estas 5 líneas a iniciarAnimacion() cuando se solucione el Keylistener en Grafico
     crearVehiculos()
     crearViajesVehiculos()
-    Grafico.graficarVehiculos(vehiculosViajes)
+    Grafico.dibujarVehiculos(vehiculosViajes)
     run()
-
   }
 
   def iniciarAnimacion(): Unit = {

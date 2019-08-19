@@ -1,4 +1,3 @@
-
 package fisica
 
 import geometria.Punto
@@ -16,5 +15,5 @@ abstract class Movil {
 
   def aumentarPosicion(dt: Double): Unit
 
-  def anguloMovimiento(): Double = velocidad.angulo.grados
+  def direccion(): Double = velocidad.direccion.grados
 }
