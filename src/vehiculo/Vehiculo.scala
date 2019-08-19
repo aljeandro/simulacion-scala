@@ -1,4 +1,3 @@
-
 package vehiculo
 
 import fisica._
@@ -6,7 +5,7 @@ import geometria.{Angulo, Punto}
 
 import scala.util.Random
 
-abstract class Vehiculo() extends Movil with MovimientoUniforme{
+abstract case class Vehiculo() extends Movil with MovimientoUniforme{
 
   protected var _velocidad: Velocidad = new Velocidad(0, new Angulo(0))
   protected var _posicion: Punto = new Punto(0, 0)

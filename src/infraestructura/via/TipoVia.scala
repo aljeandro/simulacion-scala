@@ -1,7 +1,7 @@
 
 package infraestructura.via
 
-class TipoVia(private val _nombre: String){
+case class TipoVia(private val _nombre: String){
   def nombre: String = _nombre
 }
 
