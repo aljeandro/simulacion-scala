@@ -89,5 +89,4 @@ class ResultadosSimulacion(
   def distanciaPromedio: Double = {
     vehiculoViajes.map(_.listaViasCamino.head).map(_.longitud).sum / vehiculoViajes.map(_.listaViasCamino.head).length
   }
-
 }

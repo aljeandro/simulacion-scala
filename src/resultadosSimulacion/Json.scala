@@ -9,7 +9,6 @@ import net.liftweb.json.JsonDSL._
 
 import scala.io.Source
 
-
 object Json {
 
   val archivoResultadosJson = new PrintWriter(new File("src/resultados.json"))
@@ -63,7 +62,7 @@ object Json {
 
   def tiempoDt: Double = (json \ "pametrosSimulacion" \ "dt").extract[Double]
 
-  def tiempoDormir: Long = (json \ "pametrosSimulacion" \ "tRefresh").extract[Long]
+  def tRefresh: Long = (json \ "pametrosSimulacion" \ "tRefresh").extract[Long]
 
   def vehiculosMinimo: Int = (json \ "pametrosSimulacion" \ "vehiculos" \ "minimo").extract[Int]
 

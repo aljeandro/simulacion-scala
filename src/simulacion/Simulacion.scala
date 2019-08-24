@@ -16,51 +16,90 @@ import vehiculo.Vehiculo
 
 object Simulacion extends Runnable {
 
-  var intersecciones: Array[Interseccion] = _
-  var vias: Array[Via] = _
-  var viasDirigidas: Array[Via] = _
+  //---------- Infraestructura ----------
+  private var _intersecciones: Array[Interseccion] = _
+  private var _vias: Array[Via] = _
+  private var _viasDirigidas: Array[Via] = _
 
-  var tiempoSimulado: Double = _
-  var tiempoReal: Double = _
-  var dt: Double = _
-  var tiempoDormir: Long = _
-  var minVehiculos: Int = _
-  var maxVehiculos: Int = _
-  var minVelocidad: Int = _
-  var maxVelocidad: Int = _
-  var continuarSimulacion: Boolean = _
+  def intersecciones: Array[Interseccion] = _intersecciones
+  def intersecciones_=(intersecciones: Array[Interseccion]): Unit = _intersecciones = intersecciones
 
-  var cantVehiculos: Int = _
-  var cantCarro: Int = _
-  var cantMoto: Int = _
-  var cantBus: Int = _
-  var cantCamion: Int = _
-  var cantMotoTaxi: Int = _
+  def vias: Array[Via] = _vias
+  def vias_=(vias: Array[Via]): Unit = _vias = vias
 
-  var vehiculos: Array[Vehiculo] = _
-  var vehiculosViajes: Array[VehiculoViaje] = _
+  def viasDirigidas: Array[Via] = _viasDirigidas
+  def viasDirigidas_=(viasDirigidas: Array[Via]): Unit = _viasDirigidas = viasDirigidas
+
+  //---------- Parámetros de la simulación ----------
+  private var _dt: Double = _
+  private var _tRefresh: Long = _
+  private var _minVehiculos: Int = _
+  private var _maxVehiculos: Int = _
+  private var _minVelocidad: Int = _
+  private var _maxVelocidad: Int = _
+  private var _tiempoSimulado: Double = _
+  private var _tiempoReal: Double = _
+  private var _continuarSimulacion: Boolean = _
+  private var _cantVehiculos: Int = _
+
+  def dt: Double = _dt
+  def dt_=(dt: Double): Unit = _dt = dt
+
+  def tRefresh: Long = _tRefresh
+  def tRefresh_=(tRefresh: Long): Unit = _tRefresh = tRefresh
+
+  def minVehiculos: Int = _minVehiculos
+  def minVehiculos_=(minVehiculos: Int): Unit = _minVehiculos = minVehiculos
+
+  def maxVehiculos: Int = _maxVehiculos
+  def maxVehiculos_=(maxVehiculos: Int): Unit = _maxVehiculos = maxVehiculos
+
+  def minVelocidad: Int = _minVelocidad
+  def minVelocidad_=(minVelocidad: Int): Unit = _minVelocidad = minVelocidad
+
+  def maxVelocidad: Int = _maxVelocidad
+  def maxVelocidad_=(maxVelocidad: Int): Unit = _maxVelocidad = maxVelocidad
+
+  def tiempoSimulado: Double = _tiempoSimulado
+  def tiempoSimulado_=(tiempoSimulado: Double): Unit = _tiempoSimulado = tiempoSimulado
+
+  def tiempoReal: Double = _tiempoReal
+  def tiempoReal_=(tiempoReal: Double): Unit = _tiempoReal = tiempoReal
+
+  def continuarSimulacion: Boolean = _continuarSimulacion
+  def continuarSimulacion_=(continuarSimulacion: Boolean): Unit = _continuarSimulacion = continuarSimulacion
+
+  def cantVehiculos: Int = _cantVehiculos
+  def cantVehiculos_=(cantVehiculos: Int): Unit = _cantVehiculos = cantVehiculos
+
+  //---------- Listas de los vehiculos ----------
+  private var _vehiculos: Array[Vehiculo] = _
+  private var _vehiculosViajes: Array[VehiculoViaje] = _
+
+  def vehiculos: Array[Vehiculo] = _vehiculos
+  def vehiculos_=(vehiculos: Array[Vehiculo]): Unit = _vehiculos = vehiculos
+
+  def vehiculosViajes: Array[VehiculoViaje] = _vehiculosViajes
+  def vehiculosViajes_=(vehiculosViajes: Array[VehiculoViaje]): Unit = _vehiculosViajes = vehiculosViajes
 
 
   def iniciarSimulacion(): Unit = {
     cargarInfraestructura()
     construirGrafo()
-    Grafico.dibujarMapa(vias)
-
     cargarParametros()
     crearVehiculos()
     crearViajesVehiculos()
+    Grafico.dibujarMapa(vias)
     Grafico.dibujarVehiculos(vehiculosViajes)
   }
 
   def iniciarAnimacion(): Unit = {
     continuarSimulacion = true
-    println(continuarSimulacion)
     run()
   }
 
   def pausarAnimacion(): Unit = {
     continuarSimulacion = false
-    println(continuarSimulacion)
   }
 
   def cargarInfraestructura(): Unit = {
@@ -190,32 +229,24 @@ object Simulacion extends Runnable {
   def construirGrafo(): Unit = GrafoVia.construir(vias)
 
   def cargarParametros(): Unit = {
-    tiempoSimulado = 0
-    tiempoReal = 0
     dt = Json.tiempoDt
-    tiempoDormir = Json.tiempoDormir
+    tRefresh = Json.tRefresh
     minVehiculos = Json.vehiculosMinimo
     maxVehiculos = Json.vehiculosMaximo
     minVelocidad = Json.velocidadMinima
     maxVelocidad = Json.velocidadMaxima
-
     Vehiculo.proporcionCarro = Json.proporcionCarros
     Vehiculo.proporcionMoto = Json.proporcionMotos
     Vehiculo.proporcionBus = Json.proporcionBuses
     Vehiculo.proporcionCamion = Json.proporcionCamiones
-
-    continuarSimulacion = true
+    tiempoSimulado = 0
+    tiempoReal = 0
   }
 
   def crearVehiculos(): Unit = {
-    cantVehiculos = Random.nextInt(maxVehiculos - minVehiculos) + minVehiculos
+    definirCantidadVehiculosEnListas()
 
     var index: Int = 0
-
-    vehiculos = new Array[Vehiculo](cantVehiculos)
-    vehiculosViajes = new Array[VehiculoViaje](cantVehiculos)
-    VehiculoViaje.vehiculosEnSuDestino = new ArrayBuffer[Vehiculo](cantVehiculos)
-
     while (index < cantVehiculos) {
       val vehiculo = Vehiculo.generarVehiculo
       vehiculos(index) = vehiculo
@@ -223,17 +254,16 @@ object Simulacion extends Runnable {
     }
   }
 
+  def definirCantidadVehiculosEnListas(): Unit = {
+    cantVehiculos = Random.nextInt(maxVehiculos - minVehiculos) + minVehiculos
+    vehiculos = new Array[Vehiculo](cantVehiculos)
+    vehiculosViajes = new Array[VehiculoViaje](cantVehiculos)
+    VehiculoViaje.vehiculosEnSuDestino = new ArrayBuffer[Vehiculo](cantVehiculos)
+  }
+
   def crearViajesVehiculos(): Unit = {
-    val cantIntersecciones = intersecciones.length
-
     for (index <- 0 until cantVehiculos) {
-      val indexOrigenAleat: Int = Random.nextInt(cantIntersecciones)
-      var indexDestinoAleat: Int = Random.nextInt(cantIntersecciones)
-
-      while (indexOrigenAleat == indexDestinoAleat) indexDestinoAleat = Random.nextInt(cantIntersecciones)
-
-      val origen: Interseccion = intersecciones(indexOrigenAleat)
-      val destino: Interseccion = intersecciones(indexDestinoAleat)
+      val (origen, destino) = crearOrigenYDestinoVehiculo()
 
       val vehiculoActual = vehiculos(index)
       vehiculoActual.posicion = origen
@@ -243,15 +273,26 @@ object Simulacion extends Runnable {
     }
   }
 
+  def crearOrigenYDestinoVehiculo(): (Interseccion, Interseccion) = {
+    val cantIntersecciones = intersecciones.length
+
+    val indexOrigenAleat: Int = Random.nextInt(cantIntersecciones)
+    var indexDestinoAleat: Int = Random.nextInt(cantIntersecciones)
+
+    while (indexOrigenAleat == indexDestinoAleat) indexDestinoAleat = Random.nextInt(cantIntersecciones)
+
+    (intersecciones(indexOrigenAleat), intersecciones(indexDestinoAleat))
+  }
+
   def run(): Unit = {
     println("Entré a run()")
     while (continuarSimulacion) {
       println("Entré al while de run()")
       vehiculosViajes.foreach(_.mover(dt))
       tiempoSimulado += dt
-      tiempoReal += tiempoDormir
+      tiempoReal += tRefresh
       Grafico.graficarVehiculos(vehiculosViajes)
-      Thread.sleep(tiempoDormir)
+      Thread.sleep(tRefresh)
 
       if (VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) {
         continuarSimulacion = false

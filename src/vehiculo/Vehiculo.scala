@@ -23,10 +23,23 @@ abstract case class Vehiculo() extends Movil with MovimientoUniforme{
 
 object Vehiculo{
 
-  var proporcionCarro: Double = _
-  var proporcionMoto: Double = _
-  var proporcionBus: Double = _
-  var proporcionCamion: Double = _
+  private var _proporcionCarro: Double = _
+  private var _proporcionMoto: Double = _
+  private var _proporcionBus: Double = _
+  private var _proporcionCamion: Double = _
+
+  def proporcionCarro: Double = _proporcionCarro
+  def proporcionCarro_=(proporcionCarro: Double): Unit = _proporcionCarro = proporcionCarro
+
+  def proporcionMoto: Double = _proporcionMoto
+  def proporcionMoto_=(proporcionMoto: Double): Unit = _proporcionMoto = proporcionMoto
+
+  def proporcionBus: Double = _proporcionBus
+  def proporcionBus_=(proporcionBus: Double): Unit = _proporcionBus = proporcionBus
+
+  def proporcionCamion: Double = _proporcionCamion
+  def proporcionCamion_=(proporcionCamion: Double): Unit = _proporcionCamion = proporcionCamion
+
 
   def generarVehiculo: Vehiculo = {
     val numAleatorio: Double = Random.nextDouble() // Valor aleatorio entre 0 (inclusivo) y 1 (exclusivo)

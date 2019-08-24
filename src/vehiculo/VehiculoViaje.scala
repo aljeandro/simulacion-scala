@@ -62,5 +62,9 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
 }
 
 object VehiculoViaje{
-  var vehiculosEnSuDestino: ArrayBuffer[Vehiculo] = ArrayBuffer[Vehiculo]()
+  private var _vehiculosEnSuDestino: ArrayBuffer[Vehiculo] = _
+
+  def vehiculosEnSuDestino: ArrayBuffer[Vehiculo] = _vehiculosEnSuDestino
+  def vehiculosEnSuDestino_=(vehiculosEnSuDestino: ArrayBuffer[Vehiculo]): Unit =
+    _vehiculosEnSuDestino = vehiculosEnSuDestino
 }
