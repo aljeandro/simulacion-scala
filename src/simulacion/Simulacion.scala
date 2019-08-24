@@ -93,15 +93,6 @@ object Simulacion extends Runnable {
     Grafico.dibujarVehiculos(vehiculosViajes)
   }
 
-  def iniciarAnimacion(): Unit = {
-    continuarSimulacion = true
-    run()
-  }
-
-  def pausarAnimacion(): Unit = {
-    continuarSimulacion = false
-  }
-
   def cargarInfraestructura(): Unit = {
     val niquia = new Interseccion(300, 12000, "Niquia")
     val lauraAuto = new Interseccion(2400, 11400, "M. Laura Auto")
@@ -283,6 +274,13 @@ object Simulacion extends Runnable {
 
     (intersecciones(indexOrigenAleat), intersecciones(indexDestinoAleat))
   }
+
+  def iniciarAnimacion(): Unit = {
+    continuarSimulacion = true
+    run()
+  }
+
+  def pausarAnimacion(): Unit = continuarSimulacion = false
 
   def run(): Unit = {
     println("Entré a run()")

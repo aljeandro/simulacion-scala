@@ -15,5 +15,6 @@
 
 #### Correciones pendientes hechas por el profesor:
 * Mal uso de hilos. Consultar la documentación de Thread y Runnable.
+* No funciona F5 ni F6. 
 * Faltan algunos Getters y Setters.
 * Preferir Match sobre If o Else if.

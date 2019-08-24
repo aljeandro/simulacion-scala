@@ -64,15 +64,13 @@ object Grafico{
   trazadoGrafica.setBackgroundPaint(Color.white)  // Fondo blanco para el gráfico
 
 
-  //---------------------- ¿Almaceno este trozo de código en una función y cómo?
-
+  //---------- Creación de los colores de las intersecciones
   var coloresIntersecciones: Map[Interseccion, Color] = Map()
 
   Simulacion.intersecciones.foreach(interseccion => coloresIntersecciones +=
     (interseccion -> new Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255))))
 
-  //------------------------------------------------------------------------
-
+  //---------- Eventos del teclado ----------
   marcoGrafica.addKeyListener(new KeyListener {
 
     override def keyTyped(keyEvent: KeyEvent): Unit = {}
