@@ -7,7 +7,6 @@ import geometria.Punto
 import infraestructura.via.Via
 import simulacion.Simulacion
 
-import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, Queue}
 import scala.math.abs
 
@@ -17,7 +16,7 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
   val listaViasCamino: List[Via] = camino.get.edges.toList.map(_.toOuter.label).
     map(label => Simulacion.viasDirigidas.filter(via => via.nombreIdentificador() == label).head)
 
-  val colaViasCamino: mutable.Queue[Via] = mutable.Queue(listaViasCamino: _*)
+  val colaViasCamino: Queue[Via] = Queue(listaViasCamino: _*)
 
   private var viaActual = colaViasCamino.dequeue()
   vehiculo.velocidad.direccion.grados = viaActual.angulo

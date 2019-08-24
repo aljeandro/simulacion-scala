@@ -16,6 +16,7 @@ import simulacion.Simulacion
 import vehiculo.{Bus, Camion, Carro, Moto, MotoTaxi, Vehiculo, VehiculoViaje}
 
 import scala.collection.mutable.ArrayBuffer
+import scala.util.Random
 
 
 object Grafico{
@@ -56,13 +57,21 @@ object Grafico{
   var seriesVias: Array[XYSeries] = Array()
   var seriesVehiculos: ArrayBuffer[XYSeries] = ArrayBuffer()
 
-
   trazadoGrafica.setRenderer(renderizador)
   grafica.removeLegend()  // Se remueve las leyendas del gráfico que aparece en la parte inferior
   trazadoGrafica.getRangeAxis().setVisible(false) // Se remueve el eje Y
   trazadoGrafica.getDomainAxis().setVisible(false)  // Se remueve el eje X
   trazadoGrafica.setBackgroundPaint(Color.white)  // Fondo blanco para el gráfico
 
+
+  //---------------------- ¿Almaceno este trozo de código en una función y cómo?
+
+  var coloresIntersecciones: Map[Interseccion, Color] = Map()
+
+  Simulacion.intersecciones.foreach(interseccion => coloresIntersecciones +=
+    (interseccion -> new Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255))))
+
+  //------------------------------------------------------------------------
 
   marcoGrafica.addKeyListener(new KeyListener {
 
@@ -72,11 +81,9 @@ object Grafico{
 
       val key : Int = keyEvent.getKeyCode
 
-      if (key == KeyEvent.VK_F5) {
-        Simulacion.iniciarAnimacion()
-      }
-      else if (key == KeyEvent.VK_F6) {Simulacion.continuarSimulacion = false}
+      if (key == KeyEvent.VK_F5) Simulacion.iniciarAnimacion()
 
+      else if (key == KeyEvent.VK_F6) Simulacion.pausarAnimacion()
     }
 
     override def keyReleased(keyEvent: KeyEvent): Unit = {}
@@ -85,7 +92,7 @@ object Grafico{
 
   def dibujarMapa(vias: Array[Via]): Unit = {
 
-    val lineaParametro = new BasicStroke(4.0f)
+    val lineaParametro = new BasicStroke(2.5f)
 
 
     def crearSerieVia(via: Via): XYSeries = {
@@ -123,7 +130,7 @@ object Grafico{
         interseccion.x,
         interseccion.y + aumentoPosicionY)
 
-      etiqueta.setPaint(interseccion.color)
+      etiqueta.setPaint(coloresIntersecciones(interseccion))
       etiqueta.setFont(new Font("SansSerif", Font.PLAIN, 9))
       trazadoGrafica.addAnnotation(etiqueta)
     }
@@ -157,7 +164,7 @@ object Grafico{
       coleccionSeries.addSeries(serieVehiculo)
       seriesVehiculos += serieVehiculo
 
-      renderizador.setSeriesPaint(coleccionSeries.indexOf(serieVehiculo), vehiculoViaje.destino.color)
+      renderizador.setSeriesPaint(coleccionSeries.indexOf(serieVehiculo), coloresIntersecciones(vehiculoViaje.destino))
       renderizador.setSeriesLinesVisible(coleccionSeries.indexOf(serieVehiculo), false)
       renderizador.setSeriesShapesVisible(coleccionSeries.indexOf(serieVehiculo), true)
 
@@ -169,7 +176,7 @@ object Grafico{
       else if (vehiculo.getClass == classOf[Moto]){
 
         renderizador.setSeriesShape(
-          coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createDiamond(3))
+          coleccionSeries.indexOf(serieVehiculo), ShapeUtilities.createDiamond(4))
       }
       else if (vehiculo.getClass == classOf[Bus]){
 
@@ -191,6 +198,7 @@ object Grafico{
   }
 
   def graficarVehiculos(viajesVehiculos: Array[VehiculoViaje]): Unit = {
+    println("Entré a graficar vehiculos")
     viajesVehiculos.foreach(vehiculoViaje => {
       val vehiculo = coleccionSeries.getSeries(vehiculoViaje.vehiculo.placa)
       vehiculo.clear()

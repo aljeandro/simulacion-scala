@@ -1,3 +1,4 @@
+
 package vehiculo
 
 import fisica._
@@ -31,9 +32,16 @@ object Vehiculo{
     val numAleatorio: Double = Random.nextDouble() // Valor aleatorio entre 0 (inclusivo) y 1 (exclusivo)
 
     if (0 < numAleatorio && numAleatorio <= proporcionCarro) new Carro
-    else if (proporcionCarro < numAleatorio && numAleatorio <= proporcionCarro + proporcionMoto) new Moto
-    else if (proporcionCarro + proporcionMoto < numAleatorio && numAleatorio <= proporcionCarro + proporcionMoto + proporcionBus) new Bus
-    else if (proporcionCarro + proporcionMoto + proporcionBus < numAleatorio && numAleatorio <= proporcionCarro + proporcionMoto + proporcionBus + proporcionCamion) new Camion
+
+    else if (proporcionCarro < numAleatorio &&
+      numAleatorio <= proporcionCarro + proporcionMoto) new Moto
+
+    else if (proporcionCarro + proporcionMoto < numAleatorio &&
+      numAleatorio <= proporcionCarro + proporcionMoto + proporcionBus) new Bus
+
+    else if (proporcionCarro + proporcionMoto + proporcionBus < numAleatorio &&
+      numAleatorio <= proporcionCarro + proporcionMoto + proporcionBus + proporcionCamion) new Camion
+
     else new MotoTaxi
   }
 }
