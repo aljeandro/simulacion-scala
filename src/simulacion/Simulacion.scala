@@ -41,6 +41,7 @@ object Simulacion extends Runnable {
   private var _tiempoReal: Double = _
   private var _continuarSimulacion: Boolean = _
   private var _cantVehiculos: Int = _
+  private var hilo: Thread = new Thread(Simulacion)
 
   def dt: Double = _dt
   def dt_=(dt: Double): Unit = _dt = dt
@@ -277,15 +278,16 @@ object Simulacion extends Runnable {
 
   def iniciarAnimacion(): Unit = {
     continuarSimulacion = true
-    run()
+    hilo.start()
+
   }
 
   def pausarAnimacion(): Unit = continuarSimulacion = false
 
   def run(): Unit = {
-    println("Entré a run()")
+
     while (continuarSimulacion) {
-      println("Entré al while de run()")
+
       vehiculosViajes.foreach(_.mover(dt))
       tiempoSimulado += dt
       tiempoReal += tRefresh
@@ -295,7 +297,7 @@ object Simulacion extends Runnable {
       if (VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) {
         continuarSimulacion = false
         generarResultadoSimulacion()
-        println("Acabé el while de run()")
+
       }
     }
   }

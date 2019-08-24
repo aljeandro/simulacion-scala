@@ -92,7 +92,6 @@ object Grafico{
 
     val lineaParametro = new BasicStroke(2.5f)
 
-
     def crearSerieVia(via: Via): XYSeries = {
       /**
         * Recibe una via y retorna una serie de la respectiva vía.
@@ -139,18 +138,14 @@ object Grafico{
 
     vias.foreach(via => cambiarAparienciaVia(vias.indexOf(via)))
 
-    /* Extrae todas las intersecciones de las vías, elimina las repetidas, y por cada una crea su respectiva etiqueta
-    en el gráfico.
-     */
-    (vias.map(via => via.origen) ++ vias.map(via => via.fin)).distinct.
-      foreach(interseccion => crearEtiquetaInterseccion(interseccion))
+    Simulacion.intersecciones.foreach(interseccion => crearEtiquetaInterseccion(interseccion))
 
     marcoGrafica.setSize(1500, 1000) // Tamaño de la ventana del gráfico.
     marcoGrafica.setVisible(true) // Activa la visualización del gráfico.
-
   }
 
   def dibujarVehiculos(viajesVehiculos: Array[VehiculoViaje]): Unit = {
+
     def crearRepresentacionVehiculo(vehiculoViaje: VehiculoViaje): Unit = {
 
       val vehiculo: Vehiculo = vehiculoViaje.vehiculo
@@ -196,7 +191,6 @@ object Grafico{
   }
 
   def graficarVehiculos(viajesVehiculos: Array[VehiculoViaje]): Unit = {
-    println("Entré a graficar vehiculos")
     viajesVehiculos.foreach(vehiculoViaje => {
       val vehiculo = coleccionSeries.getSeries(vehiculoViaje.vehiculo.placa)
       vehiculo.clear()
