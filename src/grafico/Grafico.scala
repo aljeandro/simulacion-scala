@@ -79,7 +79,11 @@ object Grafico{
 
       val key : Int = keyEvent.getKeyCode
 
-      if (key == KeyEvent.VK_F5) Simulacion.iniciarAnimacion()
+      if (key == KeyEvent.VK_F5){
+        seriesVehiculos.foreach(serie => coleccionSeries.removeSeries(serie))
+        seriesVehiculos.clear()
+        Simulacion.iniciarAnimacion()
+      }
 
       else if (key == KeyEvent.VK_F6) Simulacion.pausarAnimacion()
     }

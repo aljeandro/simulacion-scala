@@ -12,7 +12,7 @@ object GrafoVia {
 
   val grafo = Graph[Interseccion, WLDiEdge]()
 
-  def construir(vias: Array[Via]): Unit = {
+  def construir(vias: Array[Via], intersecciones: Array[Interseccion]): Unit = {
     // Se obtienen todas las vias que son de doble sentido.
     val viasDobleSentido: Array[Via] = vias.filter(_.sentido.nombre == "dobleVia")
 
@@ -21,7 +21,7 @@ object GrafoVia {
       new Via(via.fin, via.origen, via.velocidadMax, via.tipoVia, Sentido.unaVia, via.numeroVia, via.nombre))
 
     // Se agrega todas las intersecciones al grafo.
-    Simulacion.intersecciones.foreach(interseccion => grafo.add(interseccion))
+    intersecciones.foreach(interseccion => grafo.add(interseccion))
 
     // Se agregan las vias al grafo.
     Simulacion.viasDirigidas.foreach(via =>

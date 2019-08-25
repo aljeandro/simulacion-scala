@@ -1,8 +1,7 @@
 
 package infraestructura.via
 
-case class Sentido(private val _nombre: String) {
-  def nombre: String = _nombre
+case class Sentido(nombre: String) {
 }
 
 object Sentido{

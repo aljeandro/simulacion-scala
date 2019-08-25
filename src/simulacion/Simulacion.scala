@@ -8,6 +8,7 @@ import grafo.GrafoVia
 import vehiculo._
 import infraestructura.via._
 import infraestructura.Interseccion
+import infraestructura.semaforo.{NodoSemaforo, Semaforo}
 import resultadosSimulacion.{Json, ResultadosSimulacion}
 
 import scala.collection.mutable.ArrayBuffer
@@ -20,6 +21,8 @@ object Simulacion extends Runnable {
   private var _intersecciones: Array[Interseccion] = _
   private var _vias: Array[Via] = _
   private var _viasDirigidas: Array[Via] = _
+  private var _semaforos: Array[Semaforo] = _
+  private var _nodoSemaforos: Array[NodoSemaforo] = _
 
   def intersecciones: Array[Interseccion] = _intersecciones
   def intersecciones_=(intersecciones: Array[Interseccion]): Unit = _intersecciones = intersecciones
@@ -30,6 +33,12 @@ object Simulacion extends Runnable {
   def viasDirigidas: Array[Via] = _viasDirigidas
   def viasDirigidas_=(viasDirigidas: Array[Via]): Unit = _viasDirigidas = viasDirigidas
 
+  def semaforos: Array[Semaforo] = _semaforos
+  def semaforos_=(semaforos: Array[Semaforo]): Unit = _semaforos = semaforos
+
+  def nodoSemaforos: Array[NodoSemaforo] = _nodoSemaforos
+  def nodoSemaforos_=(nodoSemaforos: Array[NodoSemaforo]): Unit = _nodoSemaforos = nodoSemaforos
+
   //---------- Parámetros de la simulación ----------
   private var _dt: Double = _
   private var _tRefresh: Long = _
@@ -37,11 +46,14 @@ object Simulacion extends Runnable {
   private var _maxVehiculos: Int = _
   private var _minVelocidad: Int = _
   private var _maxVelocidad: Int = _
+  private var _minTiempoVerde: Int = _
+  private var _maxTiempoVerde: Int = _
+  private var _tiempoAmarillo: Int = _
   private var _tiempoSimulado: Double = _
   private var _tiempoReal: Double = _
   private var _continuarSimulacion: Boolean = _
   private var _cantVehiculos: Int = _
-  private var hilo: Thread = new Thread(Simulacion)
+  private var hilo: Thread = _
 
   def dt: Double = _dt
   def dt_=(dt: Double): Unit = _dt = dt
@@ -57,6 +69,15 @@ object Simulacion extends Runnable {
 
   def minVelocidad: Int = _minVelocidad
   def minVelocidad_=(minVelocidad: Int): Unit = _minVelocidad = minVelocidad
+
+  def minTiempoVerde: Int = _minTiempoVerde
+  def minTiempoVerde_=(minTiempoVerde: Int): Unit = _minTiempoVerde = minTiempoVerde
+
+  def maxTiempoVerde: Int = _maxTiempoVerde
+  def maxTiempoVerde_=(maxTiempoVerde: Int): Unit = _maxTiempoVerde = maxTiempoVerde
+
+  def tiempoAmarillo: Int = _tiempoAmarillo
+  def tiempoAmarillo_=(tiempoAmarillo: Int): Unit = _tiempoAmarillo = tiempoAmarillo
 
   def maxVelocidad: Int = _maxVelocidad
   def maxVelocidad_=(maxVelocidad: Int): Unit = _maxVelocidad = maxVelocidad
@@ -88,10 +109,9 @@ object Simulacion extends Runnable {
     cargarInfraestructura()
     construirGrafo()
     cargarParametros()
-    crearVehiculos()
-    crearViajesVehiculos()
+    semaforos = crearSemaforos(vias)
+    nodoSemaforos = crearNodoSemaforos(semaforos, intersecciones)
     Grafico.dibujarMapa(vias)
-    Grafico.dibujarVehiculos(vehiculosViajes)
   }
 
   def cargarInfraestructura(): Unit = {
@@ -218,7 +238,7 @@ object Simulacion extends Runnable {
     )
   }
 
-  def construirGrafo(): Unit = GrafoVia.construir(vias)
+  def construirGrafo(): Unit = GrafoVia.construir(vias, intersecciones)
 
   def cargarParametros(): Unit = {
     dt = Json.tiempoDt
@@ -231,8 +251,65 @@ object Simulacion extends Runnable {
     Vehiculo.proporcionMoto = Json.proporcionMotos
     Vehiculo.proporcionBus = Json.proporcionBuses
     Vehiculo.proporcionCamion = Json.proporcionCamiones
+    minTiempoVerde = 20 // TODO: Leer desde Json
+    maxTiempoVerde = 40 // TODO: Leer desde Json
+    tiempoAmarillo = 3 // TODO: Leer desde Json
     tiempoSimulado = 0
     tiempoReal = 0
+  }
+
+  def crearSemaforos(vias: Array[Via]): Array[Semaforo] = {
+
+    val semaforosLocal: ArrayBuffer[Semaforo] = ArrayBuffer()
+
+    def crearSemaforoVia(via: Via): Unit = {
+
+      via.sentido match {
+
+        case Sentido("dobleVia") =>
+
+          val semaforo1: Semaforo = new Semaforo(
+            via,
+            via.origen,
+            Random.nextInt(maxTiempoVerde - minTiempoVerde) + minTiempoVerde)
+
+          val semaforo2: Semaforo = new Semaforo(
+            via,
+            via.fin,
+            Random.nextInt(maxTiempoVerde - minTiempoVerde) + minTiempoVerde)
+
+          semaforosLocal += semaforo1
+          semaforosLocal += semaforo2
+
+        case Sentido("unaVia") =>
+
+          val semaforo: Semaforo = new Semaforo(
+            via,
+            via.fin,
+            Random.nextInt(maxTiempoVerde - minTiempoVerde) + minTiempoVerde)
+
+          semaforosLocal += semaforo
+      }
+    }
+    vias.foreach(via => crearSemaforoVia(via))
+    semaforosLocal.toArray
+  }
+
+  def crearNodoSemaforos(semaforos: Array[Semaforo], intersecciones: Array[Interseccion]): Array[NodoSemaforo] = {
+
+    val nodoSemaforosLocal: ArrayBuffer[NodoSemaforo] = ArrayBuffer()
+
+    def crearNodoSemaforo(interseccion: Interseccion, semaforosInterseccion: Array[Semaforo]): Unit = {
+
+      nodoSemaforosLocal += new NodoSemaforo(interseccion, semaforosInterseccion)
+    }
+
+    intersecciones.foreach(interseccion => {
+      val semaforosInterseccion = semaforos.filter(_.interseccionUbicacion == interseccion)
+      crearNodoSemaforo(interseccion, semaforosInterseccion)
+    })
+
+    nodoSemaforosLocal.toArray
   }
 
   def crearVehiculos(): Unit = {
@@ -278,8 +355,12 @@ object Simulacion extends Runnable {
 
   def iniciarAnimacion(): Unit = {
     continuarSimulacion = true
+    cargarParametros()
+    crearVehiculos()
+    crearViajesVehiculos()
+    Grafico.dibujarVehiculos(vehiculosViajes)
+    hilo = new Thread(Simulacion)
     hilo.start()
-
   }
 
   def pausarAnimacion(): Unit = continuarSimulacion = false
