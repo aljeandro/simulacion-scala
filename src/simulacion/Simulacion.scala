@@ -253,7 +253,7 @@ object Simulacion extends Runnable {
     Vehiculo.proporcionCamion = Json.proporcionCamiones
     minTiempoVerde = 20 // TODO: Leer desde Json
     maxTiempoVerde = 40 // TODO: Leer desde Json
-    tiempoAmarillo = 3 // TODO: Leer desde Json
+    Semaforo.tiempoAmarillo = 3 // TODO: Leer desde Json
     tiempoSimulado = 0
     tiempoReal = 0
   }
@@ -312,6 +312,14 @@ object Simulacion extends Runnable {
     nodoSemaforosLocal.toArray
   }
 
+  def crearHilosNodoSemaforos(nodoSemaforos: Array[NodoSemaforo]): Unit = {
+    nodoSemaforos.foreach(nodoSemaforo => nodoSemaforo.hilo = new Thread(nodoSemaforo))
+  }
+
+  def iniciarHilosNodoSemaforos(nodoSemaforos: Array[NodoSemaforo]): Unit = {
+    nodoSemaforos.foreach(nodoSemaforo => nodoSemaforo.hilo.start())
+  }
+
   def crearVehiculos(): Unit = {
     definirCantidadVehiculosEnListas()
 
@@ -359,6 +367,8 @@ object Simulacion extends Runnable {
     crearVehiculos()
     crearViajesVehiculos()
     Grafico.dibujarVehiculos(vehiculosViajes)
+    crearHilosNodoSemaforos(nodoSemaforos)
+    iniciarHilosNodoSemaforos(nodoSemaforos)
     hilo = new Thread(Simulacion)
     hilo.start()
   }
