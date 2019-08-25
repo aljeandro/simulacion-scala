@@ -14,10 +14,10 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
                     val camino: Option[GrafoVia.grafo.Path]) {
 
   //---------- Camino a recorrer del vehiculo ----------
-  val listaViasCamino: List[Via] = getListaViasCamino()
+  val listaViasCamino: List[Via] = getListaViasCamino
   val colaViasCamino: Queue[Via] = Queue(listaViasCamino: _*)
 
-  def getListaViasCamino(): List[Via] = {
+  def getListaViasCamino: List[Via] = {
     camino.get.edges.toList.map(_.toOuter.label). // Hasta aqui, obtengo los labels de las vias a recorrer
       map(label => Simulacion.viasDirigidas.filter(via => via.nombreIdentificador() == label).head)
   }

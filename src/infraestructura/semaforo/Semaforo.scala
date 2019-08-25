@@ -1,3 +1,4 @@
+
 package infraestructura.semaforo
 
 import infraestructura.Interseccion

@@ -3,12 +3,7 @@ package fisica
 import scala.math.{cos, sin, toRadians}
 import geometria.Angulo
 
-case class Velocidad
-(
-  private var _magnitud: Double,
-  private var _direccion: Angulo
-)
-{
+case class Velocidad(private var _magnitud: Double, private var _direccion: Angulo) {
   def magnitud_=(magnitud: Double): Unit = _magnitud = magnitud
   def magnitud: Double = _magnitud
 

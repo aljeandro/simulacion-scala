@@ -1,3 +1,4 @@
+
 package infraestructura.via
 
 import geometria.Recta
@@ -11,10 +12,12 @@ class Via
   val tipoVia: TipoVia,
   val sentido: Sentido,
   val numeroVia: String,
-  val nombre: String
+  val nombre: Option[String]
 ) extends Recta
 {
   type T = Interseccion
 
-  def nombreIdentificador(): String = s"$nombre desde ${origen.nombre} hasta ${fin.nombre}"
+  def nombreIdentificador(): String =
+    s"${nombre.getOrElse("Via sin nombre")} desde " +
+      s"${origen.nombre.getOrElse("origen sin nombre")} hasta ${fin.nombre.getOrElse("fin sin nombre")}"
 }

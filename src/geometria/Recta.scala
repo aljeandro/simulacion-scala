@@ -1,3 +1,4 @@
+
 package geometria
 
 import scala.math.{hypot, toDegrees, atan}
