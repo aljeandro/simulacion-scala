@@ -4,7 +4,7 @@
     "tRefresh": 1,
     "vehiculos": {
       "minimo": 50,
-      "maximo": 100
+      "maximo": 150
     },
     "velocidad": {
       "minimo": 40,
