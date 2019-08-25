@@ -120,10 +120,10 @@ object Grafico{
 
     def crearEtiquetaInterseccion(interseccion: Interseccion): Unit = {
 
-      var aumentoPosicionY = 150
+      var aumentoPosicionY = 160
       if ((interseccion.nombre == "Boliv con 65") ||
           (interseccion.nombre == "M. Laura Auto")){
-        aumentoPosicionY = -150
+        aumentoPosicionY = -160
       }
 
       val etiqueta: XYTextAnnotation = new XYTextAnnotation(
