@@ -72,6 +72,10 @@ object Json {
 
   def velocidadMaxima: Int = (json \ "pametrosSimulacion" \ "velocidad" \ "maximo").extract[Int]
 
+  def aceleracionMinima: Int = (json \ "pametrosSimulacion" \ "aceleracion" \ "minimo").extract[Int]
+
+  def aceleracionMaxima: Int = (json \ "pametrosSimulacion" \ "aceleracion" \ "maximo").extract[Int]
+
   def proporcionCarros: Double = (json \ "pametrosSimulacion" \ "proporciones" \ "carros").extract[Double]
 
   def proporcionMotos: Double = (json \ "pametrosSimulacion" \ "proporciones" \ "motos").extract[Double]
@@ -81,4 +85,16 @@ object Json {
   def proporcionCamiones: Double = (json \ "pametrosSimulacion" \ "proporciones" \ "camiones").extract[Double]
 
   def proporcionMotoTaxis: Double = (json \ "pametrosSimulacion" \ "proporciones" \ "motoTaxis").extract[Double]
+
+  def minTiempoVerde: Int = (json \ "pametrosSimulacion" \ "semaforos" \ "minTiempoVerde").extract[Int]
+
+  def maxTiempoVerde: Int = (json \ "pametrosSimulacion" \ "semaforos" \ "maxTiempoVerde").extract[Int]
+
+  def tiempoAmarillo: Int = (json \ "pametrosSimulacion" \ "semaforos" \ "tiempoAmarillo").extract[Int]
+
+  def XSemaforoFrenar: Int =
+    (json \ "pametrosSimulacion" \ "distanciasFrenadoVehiculos" \ "XSemaforoFrenar").extract[Int]
+
+  def XSemaforoAmarilloContinuar: Int =
+    (json \ "pametrosSimulacion" \ "distanciasFrenadoVehiculos" \ "XSemaforoAmarilloContinuar").extract[Int]
 }
