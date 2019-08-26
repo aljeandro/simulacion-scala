@@ -30,5 +30,4 @@ class NodoSemaforo(val interseccion: Interseccion, val semaforos: Array[Semaforo
     }
 
   }
-
 }
