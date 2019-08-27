@@ -284,6 +284,8 @@ object Simulacion extends Runnable {
 
   def run(): Unit = {
     while (continuarSimulacion) {
+      semaforos.filter(semaforo => semaforo.estado == "Verde" || semaforo.estado == "Amarillo").foreach(_.actualizarEstado(dt))
+      nodoSemaforos.foreach(_.verificarEstadoInterseccion())
       vehiculosViajes.foreach(_.mover(dt))
       tiempoSimulado += dt
       tiempoReal += tRefresh

@@ -2,32 +2,37 @@
 package infraestructura.semaforo
 
 import infraestructura.Interseccion
-import simulacion.Simulacion
 
-class NodoSemaforo(val interseccion: Interseccion, val semaforos: Array[Semaforo]) extends Runnable{
+class NodoSemaforo(val interseccion: Interseccion, val semaforos: Array[Semaforo]) {
 
-  private var _hilo: Thread = _
+  private var _indexSemaforoActivo: Int = 0
 
-  def hilo: Thread = _hilo
-  def hilo_=(hilo: Thread): Unit = _hilo = hilo
+  def indexSemaforoActivo: Int = _indexSemaforoActivo
+  def indexSemaforoActivo_=(indexSemaforoActivo: Int): Unit = _indexSemaforoActivo = indexSemaforoActivo
 
-  def run(): Unit = {
+  semaforos.head.estado = "Verde"
+  semaforos.tail.foreach(_.estado = "Rojo")
 
-    semaforos.tail.foreach(semaforo => semaforo.estado = "Rojo")
+  def verificarEstadoInterseccion(): Unit = {
+    val semaforoActivo: Semaforo = semaforos(indexSemaforoActivo)
 
-    while(Simulacion.continuarSimulacion){
-
-      for (semaforoNodo <- semaforos){
-
-        semaforoNodo.estado = "Verde"
-        Thread.sleep(semaforoNodo.tiempoVerde)
-
-        semaforoNodo.estado = "Amarillo"
-        Thread.sleep(Semaforo.tiempoAmarillo)
-
-        semaforoNodo.estado = "Rojo"
+    if (semaforoActivo.estado == "Verde") {
+      if (semaforoActivo.tiempoEnEstado >= semaforoActivo.tiempoVerde) {
+        semaforoActivo.estado = "Amarillo"
+        semaforoActivo.tiempoEnEstado = 0.0
       }
     }
+    else if (semaforoActivo.estado == "Amarillo") {
+      if (semaforoActivo.tiempoEnEstado >= Semaforo.tiempoAmarillo) {
+        semaforoActivo.estado = "Rojo"
+        semaforoActivo.tiempoEnEstado = 0.0
 
+        indexSemaforoActivo = indexSemaforoActivo + 1
+
+        if (indexSemaforoActivo == semaforos.length) indexSemaforoActivo = 0
+
+        semaforos(indexSemaforoActivo).estado = "Verde"
+      }
+    }
   }
 }
