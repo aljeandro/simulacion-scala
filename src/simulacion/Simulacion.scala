@@ -195,14 +195,6 @@ object Simulacion extends Runnable {
     nodoSemaforosLocal.toArray
   }
 
-  def crearHilosNodoSemaforos(nodoSemaforos: Array[NodoSemaforo]): Unit = {
-    nodoSemaforos.foreach(nodoSemaforo => nodoSemaforo.hilo = new Thread(nodoSemaforo))
-  }
-
-  def iniciarHilosNodoSemaforos(nodoSemaforos: Array[NodoSemaforo]): Unit = {
-    nodoSemaforos.foreach(nodoSemaforo => nodoSemaforo.hilo.start())
-  }
-
   def crearVehiculos(): Unit = {
     definirCantidadVehiculosEnListas()
 
@@ -250,8 +242,6 @@ object Simulacion extends Runnable {
     crearVehiculos()
     crearViajesVehiculos()
     Grafico.dibujarVehiculos(vehiculosViajes)
-    crearHilosNodoSemaforos(nodoSemaforos)
-    iniciarHilosNodoSemaforos(nodoSemaforos)
     hilo = new Thread(Simulacion)
     hilo.start()
   }
@@ -266,7 +256,7 @@ object Simulacion extends Runnable {
       tiempoSimulado += dt
       tiempoReal += tRefresh
       Grafico.graficarVehiculos(vehiculosViajes)
-      Thread.sleep(tRefresh)
+      Thread.sleep(tRefresh * 1000) // Multiplicando por 1000 se pasa a milisegundos
 
       if (VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) {
         continuarSimulacion = false

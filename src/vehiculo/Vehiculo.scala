@@ -7,7 +7,7 @@ import geometria.{Angulo, Punto}
 import scala.util.Random
 import scala.collection.mutable.HashMap
 
-abstract case class Vehiculo() extends Movil with MovimientoUniforme{
+abstract case class Vehiculo() extends Movil with MovimientoUniformementeAcelerado {
 
   protected var _velocidad: Velocidad = new Velocidad(0, Angulo(0))
   protected var _posicion: Punto = Punto(0, 0)
@@ -19,7 +19,7 @@ abstract case class Vehiculo() extends Movil with MovimientoUniforme{
   def posicion: Punto = _posicion
   def posicion_=(posicion: Punto): Unit = _posicion = posicion
 
-  def aumentarPosicion(dt: Double): Unit = posicion = movimientoUniforme(dt, posicion, velocidad)
+  def aumentarPosicion(dt: Double): Unit = posicion = movimientoUniformementeAcelerado(dt, posicion, velocidad)
 }
 
 
