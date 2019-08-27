@@ -263,8 +263,10 @@ object Simulacion extends Runnable {
 
       val vehiculoActual = vehiculos(index)
       vehiculoActual.posicion = origen
-      vehiculoActual.velocidad = new Velocidad(Random.nextInt(maxVelocidad - minVelocidad) + minVelocidad, Angulo(0))
-
+      vehiculoActual.velocidad = new Velocidad(0, Angulo(0))
+      vehiculoActual.magnitudVelocidadCrucero = Random.nextInt(maxVelocidad - minVelocidad) + minVelocidad
+      vehiculoActual.aceleracionAsignada = minAceleracion + Random.nextDouble() * (maxAceleracion - minAceleracion)
+      vehiculoActual.aceleracionActual = vehiculoActual.aceleracionAsignada
       vehiculosViajes(index) = new VehiculoViaje(vehiculoActual, origen, destino, GrafoVia.getCamino(origen, destino))
     }
   }

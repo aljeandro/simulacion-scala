@@ -1,4 +1,3 @@
-
 package vehiculo
 
 import fisica._
@@ -12,6 +11,9 @@ abstract case class Vehiculo() extends Movil with MovimientoUniformementeAcelera
   protected var _velocidad: Velocidad = new Velocidad(0, Angulo(0))
   protected var _posicion: Punto = Punto(0, 0)
   val placa: String
+  protected var _aceleracionAsignada: Double = _
+  protected var _aceleracionActual: Double = _
+  protected var _magnitudVelocidadCrucero: Double = _
 
   def velocidad: Velocidad = _velocidad
   def velocidad_=(velocidad: Velocidad): Unit = _velocidad = velocidad
@@ -19,7 +21,27 @@ abstract case class Vehiculo() extends Movil with MovimientoUniformementeAcelera
   def posicion: Punto = _posicion
   def posicion_=(posicion: Punto): Unit = _posicion = posicion
 
-  def aumentarPosicion(dt: Double): Unit = posicion = movimientoUniformementeAcelerado(dt, posicion, velocidad)
+  def aceleracionAsignada: Double = _aceleracionAsignada
+  def aceleracionAsignada_=(aceleracionAsignada: Double): Unit = _aceleracionAsignada = aceleracionAsignada
+
+  def aceleracionActual: Double = _aceleracionActual
+  def aceleracionActual_=(aceleracionActual: Double): Unit = _aceleracionActual = aceleracionActual
+
+  def magnitudVelocidadCrucero: Double = _magnitudVelocidadCrucero
+  def magnitudVelocidadCrucero_=(magnitudVelocidadCrucero: Double): Unit = _magnitudVelocidadCrucero = Velocidad.aMetrosPorSegundo(magnitudVelocidadCrucero)
+
+  def aumentarPosicion(dt: Double): Unit = {
+    val siguienteVelocidad = velocidadUniformementeAcelerada(dt, velocidad, aceleracionActual)
+
+    if (siguienteVelocidad > magnitudVelocidadCrucero) {
+      velocidad.magnitud = magnitudVelocidadCrucero // Ponga la velocidad en velocidad crucero
+      aceleracionActual = 0 // Deje de acelerar
+    }
+
+    posicion = movimientoUniformementeAcelerado(dt, posicion, velocidad, aceleracionActual)
+
+    if (velocidad.magnitud == 0) aceleracionActual = 0 // Si estuve desacelerando y la velocidad llegó a cero, dejo de desacelerar
+  }
 }
 
 

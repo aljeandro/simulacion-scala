@@ -3,16 +3,16 @@
     "dt": 1,
     "tRefresh": 1,
     "vehiculos": {
-      "minimo": 20,
-      "maximo": 30
+      "minimo": 1,
+      "maximo": 2
     },
     "velocidad": {
-      "minimo": 40,
+      "minimo": 55,
       "maximo": 70
     },
     "aceleracion": {
-      "minimo": 5,
-      "maximo": 20
+      "minimo": 1,
+      "maximo": 2
     },
     "proporciones": {
       "carros": 0.4,
