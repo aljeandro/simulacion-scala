@@ -30,6 +30,6 @@ object GrafoVia {
 
   // Al mandarle dos intersecciones, me retorna el camino más corto.
   def getCamino(origen: Interseccion, destino: Interseccion): Option[grafo.Path] ={
-    GrafoVia.grafo.get(origen) shortestPathTo GrafoVia.grafo.get(destino)
+    grafo.get(origen) shortestPathTo grafo.get(destino)
   }
 }

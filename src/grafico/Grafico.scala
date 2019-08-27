@@ -96,8 +96,7 @@ object Grafico{
       val key : Int = keyEvent.getKeyCode
 
       if (key == KeyEvent.VK_F5){
-        seriesVehiculos.foreach(serie => coleccionSeries.removeSeries(serie))
-        seriesVehiculos.clear()
+        if(seriesVehiculos.nonEmpty) eliminarSeriesVehiculos()
         Simulacion.nuevaAnimacion()
       }
 
@@ -227,5 +226,11 @@ object Grafico{
       vehiculo.clear()
       vehiculo.add(vehiculoViaje.vehiculo.posicion.x, vehiculoViaje.vehiculo.posicion.y)
     })
+  }
+
+
+  def eliminarSeriesVehiculos(): Unit = {
+    seriesVehiculos.foreach(serie => coleccionSeries.removeSeries(serie))
+    seriesVehiculos.clear()
   }
 }

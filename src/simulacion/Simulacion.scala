@@ -54,7 +54,7 @@ object Simulacion extends Runnable {
   private var _tiempoReal: Double = _
   private var _continuarSimulacion: Boolean = _
   private var _cantVehiculos: Int = _
-  private var hilo: Thread = _
+  private var _hilo: Thread = _
 
   def dt: Double = _dt
   def dt_=(dt: Double): Unit = _dt = dt
@@ -71,6 +71,9 @@ object Simulacion extends Runnable {
   def minVelocidad: Int = _minVelocidad
   def minVelocidad_=(minVelocidad: Int): Unit = _minVelocidad = minVelocidad
 
+  def maxVelocidad: Int = _maxVelocidad
+  def maxVelocidad_=(maxVelocidad: Int): Unit = _maxVelocidad = maxVelocidad
+
   def minTiempoVerde: Int = _minTiempoVerde
   def minTiempoVerde_=(minTiempoVerde: Int): Unit = _minTiempoVerde = minTiempoVerde
 
@@ -79,9 +82,6 @@ object Simulacion extends Runnable {
 
   def tiempoAmarillo: Int = _tiempoAmarillo
   def tiempoAmarillo_=(tiempoAmarillo: Int): Unit = _tiempoAmarillo = tiempoAmarillo
-
-  def maxVelocidad: Int = _maxVelocidad
-  def maxVelocidad_=(maxVelocidad: Int): Unit = _maxVelocidad = maxVelocidad
 
   def tiempoSimulado: Double = _tiempoSimulado
   def tiempoSimulado_=(tiempoSimulado: Double): Unit = _tiempoSimulado = tiempoSimulado
@@ -94,6 +94,9 @@ object Simulacion extends Runnable {
 
   def cantVehiculos: Int = _cantVehiculos
   def cantVehiculos_=(cantVehiculos: Int): Unit = _cantVehiculos = cantVehiculos
+
+  def hilo: Thread = _hilo
+  def hilo_=(hilo: Thread): Unit = _hilo = hilo
 
   //---------- Listas de los vehiculos ----------
   private var _vehiculos: Array[Vehiculo] = _
@@ -206,16 +209,20 @@ object Simulacion extends Runnable {
 
   def continuarAnimacion(): Unit = {
     continuarSimulacion = true
+    Grafico.dibujarVehiculos(vehiculosViajes)
+    hilo = new Thread(Simulacion)
+    hilo.start()
   }
 
   def pausarAnimacion(): Unit = {
     continuarSimulacion = false
+    Grafico.eliminarSeriesVehiculos()
   }
 
   def pararAnimacion(): Unit = {
     continuarSimulacion = false
     generarResultadoSimulacion()
-    // exit()
+    System.exit(0)
   }
 
   def crearVehiculos(): Unit = {
@@ -264,7 +271,7 @@ object Simulacion extends Runnable {
       if (VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) {
         continuarSimulacion = false
         generarResultadoSimulacion()
-        // exit()
+        System.exit(0)
       }
     }
   }
