@@ -3,12 +3,12 @@
     "dt": 1,
     "tRefresh": 1,
     "vehiculos": {
-      "minimo": 100,
-      "maximo": 200
+      "minimo": 20,
+      "maximo": 30
     },
     "velocidad": {
       "minimo": 40,
-      "maximo": 80
+      "maximo": 70
     },
     "proporciones": {
       "carros": 0.4,

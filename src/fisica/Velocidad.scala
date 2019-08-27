@@ -4,6 +4,7 @@ import scala.math.{cos, sin, toRadians}
 import geometria.Angulo
 
 case class Velocidad(private var _magnitud: Double, private var _direccion: Angulo) {
+
   def magnitud_=(magnitud: Double): Unit = _magnitud = magnitud
   def magnitud: Double = _magnitud
 
@@ -12,9 +13,11 @@ case class Velocidad(private var _magnitud: Double, private var _direccion: Angu
 
   def velocidadDireccionX(): Double = cos(toRadians(direccion.grados)) * magnitud
   def velocidadDireccionY(): Double = sin(toRadians(direccion.grados)) * magnitud
+
+  magnitud = Velocidad.aMetrosPorSegundo(_magnitud)
 }
 
 object Velocidad {
-  def aKilometrosPorHora(metrosPorSegundo: Double): Double = metrosPorSegundo * (18/5)
-  def aMetrosPorSegundo(kilometrosPorHora: Double): Double = kilometrosPorHora * (5/18)
+  def aKilometrosPorHora(metrosPorSegundo: Double): Double = metrosPorSegundo * (18.0/5.0)
+  def aMetrosPorSegundo(kilometrosPorHora: Double): Double = kilometrosPorHora * (5.0/18.0)
 }
