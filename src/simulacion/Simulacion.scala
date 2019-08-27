@@ -134,9 +134,9 @@ object Simulacion extends Runnable {
     Vehiculo.proporcionMoto = Json.proporcionMotos
     Vehiculo.proporcionBus = Json.proporcionBuses
     Vehiculo.proporcionCamion = Json.proporcionCamiones
-    minTiempoVerde = 20 // TODO: Leer desde Json
-    maxTiempoVerde = 40 // TODO: Leer desde Json
-    Semaforo.tiempoAmarillo = 3 // TODO: Leer desde Json
+    minTiempoVerde = Json.minTiempoVerde
+    maxTiempoVerde = Json.maxTiempoVerde
+    Semaforo.tiempoAmarillo = Json.tiempoAmarillo
     tiempoSimulado = 0
     tiempoReal = 0
   }

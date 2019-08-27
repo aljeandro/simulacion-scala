@@ -10,12 +10,25 @@
       "minimo": 40,
       "maximo": 70
     },
+    "aceleracion": {
+      "minimo": 5,
+      "maximo": 20
+    },
     "proporciones": {
       "carros": 0.4,
       "motos": 0.3,
       "buses": 0.15,
       "camiones": 0.1,
       "motoTaxis": 0.05
+    },
+    "semaforos": {
+      "minTiempoVerde": 20,
+      "maxTiempoVerde": 40,
+      "tiempoAmarillo": 3
+    },
+    "distanciasFrenadoVehiculos": {
+      "XSemaforoFrenar": 40,
+      "XSemaforoAmarilloContinuar": 20
     }
   }
 }
