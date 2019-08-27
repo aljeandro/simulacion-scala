@@ -1,4 +1,3 @@
-
 package simulacion
 
 import fisica.Velocidad
@@ -113,7 +112,7 @@ object Simulacion extends Runnable {
     cargarParametros()
     semaforos = crearSemaforos(vias)
     nodoSemaforos = crearNodoSemaforos(semaforos, intersecciones)
-    Grafico.dibujarMapa(vias)
+    Grafico.dibujarMapa(vias, intersecciones)
   }
 
   def cargarInfraestructura(): Unit = {
@@ -137,8 +136,6 @@ object Simulacion extends Runnable {
     minTiempoVerde = Json.minTiempoVerde
     maxTiempoVerde = Json.maxTiempoVerde
     Semaforo.tiempoAmarillo = Json.tiempoAmarillo
-    tiempoSimulado = 0
-    tiempoReal = 0
   }
 
   def crearSemaforos(vias: Array[Via]): Array[Semaforo] = {
@@ -174,6 +171,7 @@ object Simulacion extends Runnable {
           semaforosLocal += semaforo
       }
     }
+
     vias.foreach(via => crearSemaforoVia(via))
     semaforosLocal.toArray
   }
@@ -195,15 +193,34 @@ object Simulacion extends Runnable {
     nodoSemaforosLocal.toArray
   }
 
+  def nuevaAnimacion(): Unit = {
+    continuarSimulacion = true
+    tiempoSimulado = 0
+    tiempoReal = 0
+    crearVehiculos()
+    crearViajesVehiculos()
+    Grafico.dibujarVehiculos(vehiculosViajes)
+    hilo = new Thread(Simulacion)
+    hilo.start()
+  }
+
+  def continuarAnimacion(): Unit = {
+    continuarSimulacion = true
+  }
+
+  def pausarAnimacion(): Unit = {
+    continuarSimulacion = false
+  }
+
+  def pararAnimacion(): Unit = {
+    continuarSimulacion = false
+    generarResultadoSimulacion()
+    // exit()
+  }
+
   def crearVehiculos(): Unit = {
     definirCantidadVehiculosEnListas()
-
-    var index: Int = 0
-    while (index < cantVehiculos) {
-      val vehiculo = Vehiculo.generarVehiculo
-      vehiculos(index) = vehiculo
-      index += 1
-    }
+    for(index <- 0 until cantVehiculos) vehiculos(index) = Vehiculo.generarVehiculo
   }
 
   def definirCantidadVehiculosEnListas(): Unit = {
@@ -236,22 +253,8 @@ object Simulacion extends Runnable {
     (intersecciones(indexOrigenAleat), intersecciones(indexDestinoAleat))
   }
 
-  def iniciarAnimacion(): Unit = {
-    continuarSimulacion = true
-    cargarParametros()
-    crearVehiculos()
-    crearViajesVehiculos()
-    Grafico.dibujarVehiculos(vehiculosViajes)
-    hilo = new Thread(Simulacion)
-    hilo.start()
-  }
-
-  def pausarAnimacion(): Unit = continuarSimulacion = false
-
   def run(): Unit = {
-
     while (continuarSimulacion) {
-
       vehiculosViajes.foreach(_.mover(dt))
       tiempoSimulado += dt
       tiempoReal += tRefresh
@@ -261,17 +264,20 @@ object Simulacion extends Runnable {
       if (VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) {
         continuarSimulacion = false
         generarResultadoSimulacion()
-
+        // exit()
       }
     }
   }
 
   def generarResultadoSimulacion(): Unit = {
-    Json.escribirResultados(new ResultadosSimulacion(
-      vias,
-      intersecciones,
-      vehiculosViajes,
-      tiempoSimulado,
-      tiempoReal))
+    Json.escribirResultados(
+      new ResultadosSimulacion(
+        vias,
+        intersecciones,
+        vehiculosViajes,
+        tiempoSimulado,
+        tiempoReal
+      )
+    )
   }
 }
