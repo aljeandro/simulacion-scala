@@ -72,9 +72,9 @@ object Json {
 
   def velocidadMaxima: Int = (json \ "pametrosSimulacion" \ "velocidad" \ "maximo").extract[Int]
 
-  def aceleracionMinima: Int = (json \ "pametrosSimulacion" \ "aceleracion" \ "minimo").extract[Int]
+  def aceleracionMinima: Double = (json \ "pametrosSimulacion" \ "aceleracion" \ "minimo").extract[Double]
 
-  def aceleracionMaxima: Int = (json \ "pametrosSimulacion" \ "aceleracion" \ "maximo").extract[Int]
+  def aceleracionMaxima: Double = (json \ "pametrosSimulacion" \ "aceleracion" \ "maximo").extract[Double]
 
   def proporcionCarros: Double = (json \ "pametrosSimulacion" \ "proporciones" \ "carros").extract[Double]
 

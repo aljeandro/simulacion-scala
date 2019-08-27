@@ -47,9 +47,13 @@ object Simulacion extends Runnable {
   private var _maxVehiculos: Int = _
   private var _minVelocidad: Int = _
   private var _maxVelocidad: Int = _
+  private var _minAceleracion: Double = _
+  private var _maxAceleracion: Double = _
   private var _minTiempoVerde: Int = _
   private var _maxTiempoVerde: Int = _
   private var _tiempoAmarillo: Int = _
+  private var _XSemaforoFrenar: Int = _
+  private var _XSemaforoAmarilloContinuar: Int = _
   private var _tiempoSimulado: Double = _
   private var _tiempoReal: Double = _
   private var _continuarSimulacion: Boolean = _
@@ -68,11 +72,17 @@ object Simulacion extends Runnable {
   def maxVehiculos: Int = _maxVehiculos
   def maxVehiculos_=(maxVehiculos: Int): Unit = _maxVehiculos = maxVehiculos
 
+  def maxVelocidad: Int = _maxVelocidad
+  def maxVelocidad_=(maxVelocidad: Int): Unit = _maxVelocidad = maxVelocidad
+
   def minVelocidad: Int = _minVelocidad
   def minVelocidad_=(minVelocidad: Int): Unit = _minVelocidad = minVelocidad
 
-  def maxVelocidad: Int = _maxVelocidad
-  def maxVelocidad_=(maxVelocidad: Int): Unit = _maxVelocidad = maxVelocidad
+  def maxAceleracion: Double = _maxAceleracion
+  def maxAceleracion_=(maxAceleracion: Double): Unit = _maxAceleracion = maxAceleracion
+
+  def minAceleracion: Double = _minAceleracion
+  def minAceleracion_=(minAceleracion: Double): Unit = _minAceleracion = minAceleracion
 
   def minTiempoVerde: Int = _minTiempoVerde
   def minTiempoVerde_=(minTiempoVerde: Int): Unit = _minTiempoVerde = minTiempoVerde
@@ -82,6 +92,12 @@ object Simulacion extends Runnable {
 
   def tiempoAmarillo: Int = _tiempoAmarillo
   def tiempoAmarillo_=(tiempoAmarillo: Int): Unit = _tiempoAmarillo = tiempoAmarillo
+
+  def XSemaforoFrenar: Int = _XSemaforoFrenar
+  def XSemaforoFrenar_=(XSemaforoFrenar: Int): Unit = _XSemaforoFrenar = XSemaforoFrenar
+
+  def XSemaforoAmarilloContinuar: Int = _XSemaforoAmarilloContinuar
+  def XSemaforoAmarilloContinuar_=(XSemaforoAmarilloContinuar: Int): Unit = _XSemaforoAmarilloContinuar = XSemaforoAmarilloContinuar
 
   def tiempoSimulado: Double = _tiempoSimulado
   def tiempoSimulado_=(tiempoSimulado: Double): Unit = _tiempoSimulado = tiempoSimulado
@@ -132,6 +148,8 @@ object Simulacion extends Runnable {
     maxVehiculos = Json.vehiculosMaximo
     minVelocidad = Json.velocidadMinima
     maxVelocidad = Json.velocidadMaxima
+    minAceleracion = Json.aceleracionMinima
+    maxAceleracion = Json.aceleracionMaxima
     Vehiculo.proporcionCarro = Json.proporcionCarros
     Vehiculo.proporcionMoto = Json.proporcionMotos
     Vehiculo.proporcionBus = Json.proporcionBuses
@@ -139,6 +157,8 @@ object Simulacion extends Runnable {
     minTiempoVerde = Json.minTiempoVerde
     maxTiempoVerde = Json.maxTiempoVerde
     Semaforo.tiempoAmarillo = Json.tiempoAmarillo
+    XSemaforoFrenar = Json.XSemaforoFrenar
+    XSemaforoAmarilloContinuar = Json.XSemaforoAmarilloContinuar
   }
 
   def crearSemaforos(vias: Array[Via]): Array[Semaforo] = {
