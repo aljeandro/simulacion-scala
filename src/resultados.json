@@ -1,10 +1,10 @@
 {
   "resultadosSimulacion":{
     "vehiculos":{
-      "total":17,
-      "carros":6,
+      "total":11,
+      "carros":4,
       "motos":5,
-      "buses":4,
+      "buses":0,
       "camiones":2,
       "motoTaxis":0
     },
@@ -19,23 +19,23 @@
       "vehiculosEnInterseccion":{
         "promedioOrigen":0.0,
         "promedioDestino":0.0,
-        "sinOrigen":29,
-        "sinDestino":26
+        "sinOrigen":30,
+        "sinDestino":32
       }
     }
   },
   "tiempos":{
-    "simulacion":1275.7999999999352,
-    "realidad":12758.0
+    "simulacion":4725.099999999658,
+    "realidad":47251.0
   },
   "velocidades":{
-    "minima":0.013782812557729158,
-    "maxima":6.67528350385295,
-    "promedio":1.847608649705107
+    "minima":0.003088960133559658,
+    "maxima":1.8277414096507172,
+    "promedio":0.7074901155136236
   },
   "distancias":{
     "minima":1500.0,
-    "maxima":10816.653826391968,
-    "promedio":2614.8733967832245
+    "maxima":4500.0,
+    "promedio":2296.2477586111377
   }
 }

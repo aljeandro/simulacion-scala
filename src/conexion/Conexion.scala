@@ -8,6 +8,7 @@ import org.neo4j.driver.v1._
 
 import scala.collection.JavaConversions._
 import infraestructura.Interseccion
+import infraestructura.semaforo.Semaforo
 import infraestructura.via.{Sentido, TipoVia, Via}
 import simulacion.Simulacion
 import vehiculo._
@@ -105,7 +106,12 @@ object Conexion {
       val scriptCreacionViaje: String =
         "CREATE (viaje:Viaje {" +
           s"identificadorViaActual:'${vehiculoViaje.viaActual.nombreIdentificador()}', " +
-          s"vehiculoEnDestino:'${vehiculoViaje.vehiculoEnDestino}'}),"
+          s"vehiculoEnDestino:'${vehiculoViaje.vehiculoEnDestino}'," +
+          s"desacelerarViaFinal:${vehiculoViaje.desacelerarViaFinal}," +
+          s"estadoAnteriorSemaforo:'${vehiculoViaje.estadoAnteriorSemaforo}'," +
+          s"estaDetenido:${vehiculoViaje.estaDetenido}," +
+          s"semaforoDetenido:'${vehiculoViaje.semaforoDetenido.viaUbicacion.nombreIdentificador()}'" +
+          s"}),"
 
       val scriptCreacionVehiculo: String =
         "(vehiculo:Vehiculo {" +
@@ -114,7 +120,11 @@ object Conexion {
           s"tipo:'${vehiculoViaje.vehiculo.getClass}', " +
           s"placa:'${vehiculoViaje.vehiculo.placa}', " +
           s"magnitudVelocidad:${vehiculoViaje.vehiculo.velocidad.magnitud}, " +
-          s"anguloVelocidad:${vehiculoViaje.vehiculo.velocidad.direccion.grados}}),"
+          s"anguloVelocidad:${vehiculoViaje.vehiculo.velocidad.direccion.grados}," +
+          s"aceleracionAsignada:${vehiculoViaje.vehiculo.aceleracionAsignada}," +
+          s"aceleracionActual:${vehiculoViaje.vehiculo.aceleracionActual}," +
+          s"magnitudVelocidadCrucero:${vehiculoViaje.vehiculo.magnitudVelocidadCrucero}" +
+          s"}),"
 
       val scriptCreacionOrigen: String =
         "(origen:Origen {" +
@@ -149,6 +159,62 @@ object Conexion {
     driver.close()
   }
 
+  def guardarSemaforos(semaforos: Array[Semaforo]): Unit = {
+    val (driver, session) = getSession
+
+    for (semaforo <- semaforos) {
+      val scriptCreacionSemaforo: String =
+        "CREATE(semaforo: Semaforo {" +
+          s"identificadorViaUbicacion:'${semaforo.viaUbicacion.nombreIdentificador()}'," +
+          s"nombreInterseccionUbicacion:'${semaforo.interseccionUbicacion.nombre.get}'," +
+          s"tiempoVerde:${semaforo.tiempoVerde}," +
+          s"estado:'${semaforo.estado}'," +
+          s"tiempoEnEstado:${semaforo.tiempoEnEstado}" +
+          "})"
+
+      session.run(scriptCreacionSemaforo)
+    }
+    session.close()
+    driver.close()
+  }
+
+  def getSemaforos(): Array[Semaforo] = {
+    val (driver, session) = getSession
+
+    val scriptGetSemaforos: String =
+      "MATCH (semaforo: Semaforo) RETURN semaforo"
+
+    val resultSemaforos = session.run(scriptGetSemaforos)
+
+    val semaforos: ArrayBuffer[Semaforo] = ArrayBuffer()
+
+    while (resultSemaforos.hasNext) {
+      val nodoSemaforo = resultSemaforos.next().values().get(0)
+
+      val semaforo: Semaforo = new Semaforo(
+        Simulacion.viasDirigidas.filter(_.nombreIdentificador() == nodoSemaforo.get("identificadorViaUbicacion").asString()).head,
+        Simulacion.intersecciones.filter(_.nombre.get == nodoSemaforo.get("nombreInterseccionUbicacion").asString()).head,
+        nodoSemaforo.get("tiempoVerde").asLong())
+
+      semaforo.estado = nodoSemaforo.get("estado").asString()
+      semaforo.tiempoEnEstado = nodoSemaforo.get("tiempoEnEstado").asDouble()
+
+      semaforos += semaforo
+    }
+    semaforos.toArray
+  }
+
+  def eliminarSemaforos(): Unit = {
+    val (driver, session) = getSession
+
+    val scriptEliminarSemaforos: String =
+      "MATCH (semaforo:Semaforo) DELETE semaforo"
+
+    session.run(scriptEliminarSemaforos)
+    session.close()
+    driver.close()
+  }
+
   def getVehiculosViajes(): Array[VehiculoViaje] = {
     val (driver, session) = getSession
 
@@ -177,6 +243,8 @@ object Conexion {
       val nodoDestino = values.get(3)
       val nodoCamino = values.get(4)
 
+      // Asignar propiedades a Vehículo
+
       var vehiculo: Vehiculo = new Bus
 
       nodoVehiculo.get("tipo").asString() match {
@@ -187,6 +255,11 @@ object Conexion {
         case "class vehiculo.MotoTaxi" => vehiculo = new MotoTaxi
       }
 
+      vehiculo.posicion = Punto(
+        nodoVehiculo.get("posicionX").asDouble(),
+        nodoVehiculo.get("posicionY").asDouble()
+      )
+
       vehiculo.placa = nodoVehiculo.get("placa").asString()
 
       vehiculo.velocidad = new Velocidad(
@@ -194,10 +267,11 @@ object Conexion {
         Angulo(nodoVehiculo.get("anguloVelocidad").asDouble())
       )
 
-      vehiculo.posicion = Punto(
-        nodoVehiculo.get("posicionX").asDouble(),
-        nodoVehiculo.get("posicionY").asDouble()
-      )
+      vehiculo.aceleracionAsignada = nodoVehiculo.get("aceleracionAsignada").asDouble()
+
+      vehiculo.aceleracionActual = nodoVehiculo.get("aceleracionActual").asDouble()
+
+      vehiculo.magnitudVelocidadCrucero = nodoVehiculo.get("magnitudVelocidadCrucero").asDouble()
 
       val origen: Interseccion = new Interseccion(
         nodoOrigen.get("posicionX").asDouble(),
@@ -237,8 +311,23 @@ object Conexion {
         via.nombreIdentificador() == nodoViaje.get("identificadorViaActual").asString()
       ).head
 
+      vehiculoViaje.desacelerarViaFinal = nodoViaje.get("desacelerarViaFinal").asBoolean()
+
+      vehiculoViaje.estadoAnteriorSemaforo = nodoViaje.get("estadoAnteriorSemaforo").asString()
+
+      vehiculoViaje.estaDetenido = nodoViaje.get("estaDetenido").asBoolean()
+
+      vehiculoViaje.semaforoDetenido = Simulacion.semaforos.filter(_.viaUbicacion.nombreIdentificador() == nodoViaje.get("semaforoDetenido").asString()).head
+
       vehiculosViajes(index) = vehiculoViaje
     }
+
+    for (vehiViaje <- vehiculosViajes if vehiViaje.vehiculoEnDestino) {
+      VehiculoViaje.vehiculosEnSuDestino += vehiViaje.vehiculo
+    }
+
+    Simulacion.cantVehiculos = vehiculosViajes.length
+
     session.close()
     driver.close()
     vehiculosViajes

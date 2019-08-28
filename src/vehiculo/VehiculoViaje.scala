@@ -53,7 +53,7 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
 
   var estadoAnteriorSemaforo: String = _
   var estaDetenido: Boolean = false
-  var semaforoDetenido: Semaforo = _
+  var semaforoDetenido: Semaforo = Simulacion.semaforos(0)
 
   //---------- Para determinar la próxima posición del vehiculo ----------
   def mover(dt: Double): Unit = {

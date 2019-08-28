@@ -209,14 +209,25 @@ object Simulacion extends Runnable {
 
   def continuarAnimacion(): Unit = {
     continuarSimulacion = true
+
+    tiempoAmarillo = Json.tiempoAmarillo
+
     val (tiempoS, tiempoR) = Conexion.getTiempos()
     tiempoSimulado = tiempoS
     tiempoReal = tiempoR
-    vehiculosViajes = Conexion.getVehiculosViajes()
     Conexion.eliminarTiempos()
+
+    semaforos = Conexion.getSemaforos()
+    Conexion.eliminarSemaforos()
+
+    nodoSemaforos = crearNodoSemaforos(semaforos, intersecciones)
+
+    vehiculosViajes = Conexion.getVehiculosViajes()
     Conexion.eliminarVehiculosViajes()
+
     agregarVehiculosEnDestino()
     Grafico.dibujarVehiculos(vehiculosViajes)
+
     hilo = new Thread(Simulacion)
     hilo.start()
   }
@@ -233,6 +244,7 @@ object Simulacion extends Runnable {
     continuarSimulacion = false
     Conexion.guardarViajesVehiculos(vehiculosViajes)
     Conexion.guardarTiempos(tiempoSimulado, tiempoReal)
+    Conexion.guardarSemaforos(semaforos)
     generarResultadoSimulacion()
     System.exit(0)
   }
