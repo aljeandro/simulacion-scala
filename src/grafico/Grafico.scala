@@ -14,6 +14,8 @@ import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 import org.jfree.util.ShapeUtilities
 import simulacion.Simulacion
 import vehiculo.{Bus, Camion, Carro, Moto, MotoTaxi, Vehiculo, VehiculoViaje}
+import infraestructura.CamaraFotoDeteccion
+import java.awt.Rectangle
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
@@ -166,6 +168,23 @@ object Grafico{
       etiqueta.setFont(new Font("SansSerif", Font.PLAIN, 9))
       trazadoGrafica.addAnnotation(etiqueta)
     }
+  }
+
+
+  def dibujarCamaras(camaras: ArrayBuffer[CamaraFotoDeteccion]): Unit = {
+
+    var x: String = "1"
+
+    camaras.foreach(camara => {
+      val graficoCamara: XYSeries = new XYSeries(x)
+      coleccionSeries.addSeries(graficoCamara)
+      graficoCamara.add(camara.posicion.x, camara.posicion.y)
+      renderizador.setSeriesShape(coleccionSeries.indexOf(graficoCamara), ShapeUtilities.createDownTriangle(6))
+      renderizador.setSeriesPaint(coleccionSeries.indexOf(graficoCamara), Color.decode("#0026ff"))
+      renderizador.setSeriesShapesVisible(coleccionSeries.indexOf(graficoCamara), true)
+      renderizador.setSeriesLinesVisible(coleccionSeries.indexOf(graficoCamara), false)
+      x += "1"
+    })
   }
 
 

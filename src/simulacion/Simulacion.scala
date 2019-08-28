@@ -3,13 +3,14 @@ package simulacion
 import fisica.Velocidad
 import geometria.Angulo
 import grafico.Grafico
+import grafico.Grafico.dibujarCamaras
 import grafo.GrafoVia
 import vehiculo._
 import vehiculo.Vehiculo
 import infraestructura.via._
-import infraestructura.Interseccion
+import infraestructura.{CamaraFotoDeteccion, Interseccion}
 import infraestructura.semaforo.{NodoSemaforo, Semaforo}
-import resultadosSimulacion.{Json, ResultadosSimulacion}
+import resultadosSimulacion.{Comparendo, Json, ResultadosSimulacion}
 import conexion.Conexion
 
 import scala.collection.mutable.ArrayBuffer
@@ -24,6 +25,7 @@ object Simulacion extends Runnable {
   private var _viasDirigidas: Array[Via] = _
   private var _semaforos: Array[Semaforo] = _
   private var _nodoSemaforos: Array[NodoSemaforo] = _
+  val camarasFotoDeteccion: ArrayBuffer[CamaraFotoDeteccion] = ArrayBuffer()
 
   def intersecciones: Array[Interseccion] = _intersecciones
   def intersecciones_=(intersecciones: Array[Interseccion]): Unit = _intersecciones = intersecciones
@@ -128,6 +130,8 @@ object Simulacion extends Runnable {
   def iniciarSimulacion(): Unit = {
     cargarInfraestructura()
     construirGrafo()
+    crearCamarasFotoDeteccion()
+    // dibujarCamaras(camarasFotoDeteccion)
     cargarParametros()
     semaforos = crearSemaforos(vias)
     nodoSemaforos = crearNodoSemaforos(semaforos, intersecciones)
@@ -137,6 +141,12 @@ object Simulacion extends Runnable {
   def cargarInfraestructura(): Unit = {
     intersecciones = Conexion.getIntersecciones()
     vias = Conexion.getVias()
+  }
+
+  def crearCamarasFotoDeteccion(): Unit = {
+    for (x <- 0 until 9) {
+      camarasFotoDeteccion += new CamaraFotoDeteccion(viasDirigidas(x), viasDirigidas(x).longitud / 2)
+    }
   }
 
   def construirGrafo(): Unit = GrafoVia.construir(vias, intersecciones)
@@ -316,4 +326,7 @@ object Simulacion extends Runnable {
       )
     )
   }
+
+  var listaComparendos: ArrayBuffer[Comparendo] = _
+
 }
