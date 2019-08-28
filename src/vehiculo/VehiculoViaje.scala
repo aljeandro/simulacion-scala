@@ -26,11 +26,16 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
   private var _viaActual: Via = _
   private var _vehiculoEnDestino: Boolean = _
 
+  private var _desacelerarViaFinal: Boolean = false
+
   def viaActual: Via = _viaActual
   def viaActual_=(viaActual: Via): Unit = _viaActual = viaActual
 
   def vehiculoEnDestino: Boolean = _vehiculoEnDestino
   def vehiculoEnDestino_=(vehiculoEnDestino: Boolean): Unit = _vehiculoEnDestino = vehiculoEnDestino
+
+  def desacelerarViaFinal: Boolean = _desacelerarViaFinal
+  def desacelerarViaFinal_=(desacelerarViaFinal: Boolean): Unit = _desacelerarViaFinal = desacelerarViaFinal
 
 
   inicializarParametrosViaje()
@@ -60,8 +65,27 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
       }
       else {   // Si el vehiculo no esta en una intersección, aumento su posición en la via.
         vehiculo.aumentarPosicion(dt)
+        // El vehiculo está en la vía final, y ya superó 80% de la longitud de la via, entonces,
+        // comience a desacelerar.
+        if (desacelerarViaFinal && distanciaEntrePuntos(vehiculo.posicion, destino) <= viaActual.longitud * 0.2) {
+          vehiculo.aceleracionActual = calcularDesaceleracion(viaActual.longitud * 0.2)
+          desacelerarViaFinal = false
+        }
+      }
+      // Si el Vehículo no ha llegado a su destino, verifico si viaActual es la vía final y, de ser el caso,
+      // empiezo a desacelerar el vehículo.
+      if (colaViasCamino.isEmpty && vehiculo.aceleracionActual >= 0) {
+        desacelerarViaFinal = true
       }
     }
+  }
+
+  def calcularDesaceleracion(distancia: Double): Double = {
+    -1 * Math.pow(vehiculo.velocidad.magnitud, 2) / (2 * distancia)
+  }
+
+  def distanciaEntrePuntos(punto1: Punto, punto2: Punto): Double = {
+    Math.hypot(punto2.x - punto1.x, punto2.y - punto1.y)
   }
 
   def estaEnInterseccion(dt: Double): Boolean = {

@@ -290,7 +290,7 @@ object Simulacion extends Runnable {
       tiempoSimulado += dt
       tiempoReal += tRefresh
       Grafico.graficarVehiculos(vehiculosViajes)
-      Thread.sleep(tRefresh * 1000) // Multiplicando por 1000 se pasa a milisegundos
+      Thread.sleep(tRefresh)
 
       if (VehiculoViaje.vehiculosEnSuDestino.length == cantVehiculos) {
         continuarSimulacion = false
