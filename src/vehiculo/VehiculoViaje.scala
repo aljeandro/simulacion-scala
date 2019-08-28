@@ -14,8 +14,14 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
                     val camino: Option[GrafoVia.grafo.Path]) {
 
   //---------- Camino a recorrer del vehiculo ----------
-  val listaViasCamino: List[Via] = getListaViasCamino
-  val colaViasCamino: Queue[Via] = Queue(listaViasCamino: _*)
+  private var _listaViasCamino: List[Via] = getListaViasCamino
+  private var _colaViasCamino: Queue[Via] = Queue(listaViasCamino: _*)
+
+  def listaViasCamino: List[Via] = _listaViasCamino
+  def listaViasCamino_=(listaViasCamino: List[Via]): Unit = _listaViasCamino = listaViasCamino
+
+  def colaViasCamino: Queue[Via] = _colaViasCamino
+  def colaViasCamino_=(colaViasCamino: Queue[Via]): Unit = _colaViasCamino = colaViasCamino
 
   def getListaViasCamino: List[Via] = {
       camino.get.edges.toList.map(_.toOuter.label). // Hasta aqui, obtengo los labels de las vias a recorrer
@@ -32,8 +38,6 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
   def vehiculoEnDestino: Boolean = _vehiculoEnDestino
   def vehiculoEnDestino_=(vehiculoEnDestino: Boolean): Unit = _vehiculoEnDestino = vehiculoEnDestino
 
-
-  inicializarParametrosViaje()
 
   def inicializarParametrosViaje(): Unit = {
     vehiculoEnDestino = false

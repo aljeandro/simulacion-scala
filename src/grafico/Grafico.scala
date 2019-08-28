@@ -103,8 +103,6 @@ object Grafico{
       else if (key == KeyEvent.VK_F1) Simulacion.continuarAnimacion()
 
       else if (key == KeyEvent.VK_F2) Simulacion.pausarAnimacion()
-
-      else if (key == KeyEvent.VK_F6) Simulacion.pararAnimacion()
     }
   })
 
