@@ -20,6 +20,6 @@ trait MovimientoUniformementeAcelerado {
   def velocidadUniformementeAcelerada(dt: Double,
                                       velocidad: Velocidad,
                                       aceleracion: Double): Double = {
-    velocidad.magnitud + aceleracion * dt
+    if (velocidad.magnitud + aceleracion * dt < 0) 0 else velocidad.magnitud + aceleracion * dt
   }
 }

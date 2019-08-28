@@ -6,6 +6,7 @@ import grafo.GrafoVia
 import geometria.Punto
 import infraestructura.via.Via
 import simulacion.Simulacion
+import infraestructura.semaforo.Semaforo
 
 import scala.collection.mutable.{ArrayBuffer, Queue}
 import scala.math.abs
@@ -50,8 +51,21 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
     vehiculo.velocidad.direccion.grados = viaActual.angulo
   }
 
+  var estadoAnteriorSemaforo: String = _
+  var estaDetenido: Boolean = false
+  var semaforoDetenido: Semaforo = _
+
   //---------- Para determinar la próxima posición del vehiculo ----------
   def mover(dt: Double): Unit = {
+
+    if (estaDetenido) {
+      if (semaforoDetenido.estado == "Verde") {
+        vehiculo.aceleracionActual = vehiculo.aceleracionAsignada
+        estaDetenido = false
+      }
+    }
+
+    val x = Simulacion.semaforos.filter(_.interseccionUbicacion == viaActual.origen).head
     if (!vehiculoEnDestino){   // Si el vehiculo no ha llegado a su destino
       if (estaEnInterseccion(dt)){   // verifico si está en una intersección, de ser así
 
@@ -75,6 +89,23 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
           vehiculo.aceleracionActual = calcularDesaceleracion(viaActual.longitud * 0.2)
           desacelerarViaFinal = false
         }
+        else if (distanciaEntrePuntos(vehiculo.posicion, viaActual.fin) < Simulacion.XSemaforoFrenar) {
+          if (obtenerSemaforo().estado == "Rojo") {
+            vehiculo.aceleracionActual = calcularDesaceleracion(distanciaEntrePuntos(vehiculo.posicion, viaActual.fin))
+            estaDetenido = true
+            semaforoDetenido = obtenerSemaforo()
+          }
+          else if (obtenerSemaforo().estado == "Amarillo") {
+            vehiculo.aceleracionActual = calcularDesaceleracion(distanciaEntrePuntos(vehiculo.posicion, viaActual.fin))
+            estaDetenido = true
+            semaforoDetenido = obtenerSemaforo()
+          }
+        }
+        else if (distanciaEntrePuntos(vehiculo.posicion, viaActual.fin) < Simulacion.XSemaforoAmarilloContinuar) {
+          if (estadoAnteriorSemaforo == "Verde" && obtenerSemaforo().estado == "Amarillo") {
+            vehiculo.aceleracionActual = vehiculo.aceleracionAsignada
+          }
+        }
       }
       // Si el Vehículo no ha llegado a su destino, verifico si viaActual es la vía final y, de ser el caso,
       // empiezo a desacelerar el vehículo.
@@ -82,6 +113,13 @@ class VehiculoViaje(val vehiculo: Vehiculo, val origen: Interseccion, val destin
         desacelerarViaFinal = true
       }
     }
+    estadoAnteriorSemaforo = obtenerSemaforo().estado
+  }
+
+  def obtenerSemaforo(): Semaforo = {
+    Simulacion.semaforos.filter(semaforo => {
+      semaforo.viaUbicacion == viaActual && semaforo.interseccionUbicacion == viaActual.fin
+    }).head
   }
 
   def calcularDesaceleracion(distancia: Double): Double = {

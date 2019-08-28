@@ -167,25 +167,6 @@ object Simulacion extends Runnable {
 
     def crearSemaforoVia(via: Via): Unit = {
 
-      via.sentido match {
-
-        case Sentido("dobleVia") =>
-
-          val semaforo1: Semaforo = new Semaforo(
-            via,
-            via.origen,
-            Random.nextInt(maxTiempoVerde - minTiempoVerde) + minTiempoVerde)
-
-          val semaforo2: Semaforo = new Semaforo(
-            via,
-            via.fin,
-            Random.nextInt(maxTiempoVerde - minTiempoVerde) + minTiempoVerde)
-
-          semaforosLocal += semaforo1
-          semaforosLocal += semaforo2
-
-        case Sentido("unaVia") =>
-
           val semaforo: Semaforo = new Semaforo(
             via,
             via.fin,
@@ -193,9 +174,8 @@ object Simulacion extends Runnable {
 
           semaforosLocal += semaforo
       }
-    }
 
-    vias.foreach(via => crearSemaforoVia(via))
+    viasDirigidas.foreach(via => crearSemaforoVia(via))
     semaforosLocal.toArray
   }
 

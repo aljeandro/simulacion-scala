@@ -27,8 +27,8 @@
       "tiempoAmarillo": 3
     },
     "distanciasFrenadoVehiculos": {
-      "XSemaforoFrenar": 40,
-      "XSemaforoAmarilloContinuar": 20
+      "XSemaforoFrenar": 150,
+      "XSemaforoAmarilloContinuar": 100
     }
   }
 }
