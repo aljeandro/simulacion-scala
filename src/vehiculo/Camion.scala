@@ -2,6 +2,5 @@
 package vehiculo
 
 class Camion extends Vehiculo() {
-
-  val placa: String = Vehiculo.generarPlaca("Camion")
+  protected var _placa: String = Vehiculo.generarPlaca("Camion")
 }

@@ -10,7 +10,7 @@ abstract case class Vehiculo() extends Movil with MovimientoUniformementeAcelera
 
   protected var _velocidad: Velocidad = new Velocidad(0, Angulo(0))
   protected var _posicion: Punto = Punto(0, 0)
-  val placa: String
+  protected var _placa: String
   protected var _aceleracionAsignada: Double = _
   protected var _aceleracionActual: Double = _
   protected var _magnitudVelocidadCrucero: Double = _
@@ -20,6 +20,9 @@ abstract case class Vehiculo() extends Movil with MovimientoUniformementeAcelera
 
   def posicion: Punto = _posicion
   def posicion_=(posicion: Punto): Unit = _posicion = posicion
+
+  def placa: String = _placa
+  def placa_=(placa: String): Unit = _placa = placa
 
   def aceleracionAsignada: Double = _aceleracionAsignada
   def aceleracionAsignada_=(aceleracionAsignada: Double): Unit = _aceleracionAsignada = aceleracionAsignada

@@ -135,8 +135,8 @@ object Simulacion extends Runnable {
   }
 
   def cargarInfraestructura(): Unit = {
-    intersecciones = Conexion.getIntersecciones
-    vias = Conexion.getVias
+    intersecciones = Conexion.getIntersecciones()
+    vias = Conexion.getVias()
   }
 
   def construirGrafo(): Unit = GrafoVia.construir(vias, intersecciones)
@@ -229,18 +229,30 @@ object Simulacion extends Runnable {
 
   def continuarAnimacion(): Unit = {
     continuarSimulacion = true
+    val (tiempoS, tiempoR) = Conexion.getTiempos()
+    tiempoSimulado = tiempoS
+    tiempoReal = tiempoR
+    vehiculosViajes = Conexion.getVehiculosViajes()
+    Conexion.eliminarTiempos()
+    Conexion.eliminarVehiculosViajes()
+    agregarVehiculosEnDestino()
     Grafico.dibujarVehiculos(vehiculosViajes)
     hilo = new Thread(Simulacion)
     hilo.start()
   }
 
-  def pausarAnimacion(): Unit = {
-    continuarSimulacion = false
-    Grafico.eliminarSeriesVehiculos()
+  def agregarVehiculosEnDestino(): Unit = {
+    cantVehiculos = vehiculosViajes.length
+    VehiculoViaje.vehiculosEnSuDestino = new ArrayBuffer[Vehiculo](cantVehiculos)
+    for(vehiculoViaje <- vehiculosViajes if vehiculoViaje.vehiculoEnDestino) {
+      VehiculoViaje.vehiculosEnSuDestino += vehiculoViaje.vehiculo
+    }
   }
 
-  def pararAnimacion(): Unit = {
+  def pausarAnimacion(): Unit = {
     continuarSimulacion = false
+    Conexion.guardarViajesVehiculos(vehiculosViajes)
+    Conexion.guardarTiempos(tiempoSimulado, tiempoReal)
     generarResultadoSimulacion()
     System.exit(0)
   }
@@ -268,6 +280,7 @@ object Simulacion extends Runnable {
       vehiculoActual.aceleracionAsignada = minAceleracion + Random.nextDouble() * (maxAceleracion - minAceleracion)
       vehiculoActual.aceleracionActual = vehiculoActual.aceleracionAsignada
       vehiculosViajes(index) = new VehiculoViaje(vehiculoActual, origen, destino, GrafoVia.getCamino(origen, destino))
+      vehiculosViajes(index).inicializarParametrosViaje()
     }
   }
 
